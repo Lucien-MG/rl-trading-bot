@@ -3,6 +3,7 @@
 
 import os
 import enum
+import random
 
 import gym
 from gym import error, utils
@@ -14,12 +15,12 @@ import pandas as pd
 class Actions(enum.Enum):
     Skip = 0
     Buy = 1
-    Close = 2
+    Sell = 2
 
 class StockExchangeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, stock_exchange_data_dir, cash=1000, state_size=10, commission_func=lambda p : p * 0.05):
+    def __init__(self, stock_exchange_data_dir, state_size=10, cash=1000, commission_func=lambda x: x * 0.03):
         self.action_space = gym.spaces.Discrete(n=len(Actions))
         self.observation_space = gym.spaces.Discrete(state_size)
 
@@ -32,59 +33,64 @@ class StockExchangeEnv(gym.Env):
         self.df_stock_exchange.drop_duplicates(subset=['date'])
         self.df_stock_exchange.sort_values(by=['date'])
 
-        # Pass price to float64:
-        for column in ['opening', 'max', 'min', 'closing']:
-            self.df_stock_exchange[column] = [x.replace(',', '.') for x in self.df_stock_exchange[column]]
-            self.df_stock_exchange[column] = self.df_stock_exchange[column].astype(float)
-
         # Define states:
         self.commission_func = commission_func
         self.state_size = state_size
         self.current_step = self.state_size
 
+        self.max_cash = cash
         self.cash = cash
+
         self.stock = 0
 
     def _read_csv(self, path):
-        return pd.read_csv(path, sep=';', header=None, names=["code", "date", "opening", "max", "min", "closing", "?"], decimal=".")
+        df_stock_exchange = pd.read_csv(path, sep=';', header=None, names=["code", "date", "opening", "max", "min", "closing", "?"])
+
+        for col in ["opening", "max", "min", "closing"]:
+            df_stock_exchange[col] = df_stock_exchange[col].str.replace(',', '.').astype(float)
+
+        return df_stock_exchange
 
     def step(self, action):
         assert self.action_space.contains(action)
-
-        # Transoform int into action
         action = Actions(action)
 
-        # Define state, reward, done, info that will be returned
-        state = self.df_stock_exchange[["opening", "max", "min", "closing"]][self.current_step - self.state_size:self.current_step].to_numpy()
         reward = 0
-        done = self.current_step >= len(self.df_stock_exchange) - 1
-        info = {}
-
-        # Actions:
-        if action == Actions.Skip:
-            reward = 0
-
-        if action == Actions.Buy:
-            self.cash -= self.commission_func((state[-1][1] + state[-1][2]) / 2)
-            self.stock += 1
-            reward -= 0.1
-
-        if action == Actions.Close:
-            if self.stock:
-                self.cash += self.commission_func((state[-1][1] + state[-1][2]) / 2)
-                self.stock -= 1
-                reward -= 0.1
-            else:
-                reward -= 1
-
-        # Calculate reward
-        reward += 
+        state = { 
+            "history": self.df_stock_exchange[["opening", "max", "min", "closing"]][self.current_step - self.state_size:self.current_step].to_numpy(),
+            "stock": self.stock
+        }
 
         # Next step:
         self.current_step += 1
 
+        if action == Actions.Buy:
+            self.stock += 1
+            price = random.uniform(self.df_stock_exchange["min"][self.current_step], self.df_stock_exchange["max"][self.current_step])
+            self.cash -= price + self.commission_func(price)
+            reward += -0.1
+
+        if action == Actions.Sell and self.nb_action != 0:
+            self.stock -= 1
+            price = random.uniform(self.df_stock_exchange["min"][self.current_step], self.df_stock_exchange["max"][self.current_step])
+            self.cash += price - self.commission_func(price)
+            reward += -0.1
+
+        if action == Actions.Sell and self.nb_action == 0:
+            reward += -1
+            done = True
+
+        if action == Actions.Skip:
+            reward += -0.01
+
+        reward += (self.cash - self.max_cash) / self.max_cash
+        self.max_cash = max(self.cash, self.max_cash)
+
+        # Determine if the env is finished
+        done = self.current_step >= len(self.df_stock_exchange) - 1
+
         # Update info:
-        info = { "cash": self.cash, "stock": self.stock }
+        info = { "cash": self.cash }
 
         return state, reward, done, info
 

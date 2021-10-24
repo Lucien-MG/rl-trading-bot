@@ -10,6 +10,6 @@ env.reset()
 done = False
 
 while not done:
-    state, reward, done, info = env.step(1)
+    state, reward, done, info = env.step(0)
     print(state, reward, done, info)
 
