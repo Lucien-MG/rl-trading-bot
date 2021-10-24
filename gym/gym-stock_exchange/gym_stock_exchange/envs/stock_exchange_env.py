@@ -21,6 +21,7 @@ class StockExchangeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
     def __init__(self, stock_exchange_data_dir, state_size=10, cash=1000, commission_func=lambda x: x * 0.03):
+        print(len(Actions))
         self.action_space = gym.spaces.Discrete(n=len(Actions))
         self.observation_space = gym.spaces.Discrete(state_size)
 
@@ -70,13 +71,13 @@ class StockExchangeEnv(gym.Env):
             self.cash -= price + self.commission_func(price)
             reward += -0.1
 
-        if action == Actions.Sell and self.nb_action != 0:
+        if action == Actions.Sell and self.stock != 0:
             self.stock -= 1
             price = random.uniform(self.df_stock_exchange["min"][self.current_step], self.df_stock_exchange["max"][self.current_step])
             self.cash += price - self.commission_func(price)
             reward += -0.1
 
-        if action == Actions.Sell and self.nb_action == 0:
+        if action == Actions.Sell and self.stock == 0:
             reward += -1
             done = True
 
