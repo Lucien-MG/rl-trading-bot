@@ -21,18 +21,18 @@ agent = AgentRandom(env.action_space.n)
 state = env.reset()
 done = False
 
-f = open("logs.csv", "a+")
-f.write('reward,done,cash')
-f.close()
-
 @app.route('/', methods = ["GET", "POST"])
 def index():
     if request.method == "POST":
         df = pd.read_csv('logs.csv', sep=",")
-        df["reward"][:500].astype(float).plot()
+        df.iloc[:, 0].astype(float).plot()
         base_url = '/static/images/rewards.png'
         plt.savefig('src' + base_url)
-        return render_template('reward.html', name='Rewards over time', url=base_url)
+
+        df.iloc[:, 2].astype(float).plot()
+        base_url_cash = '/static/images/cash.png'
+        plt.savefig('src' + base_url_cash)
+        return render_template('reward.html', name='Rewards over time', url=base_url, url_cash=base_url_cash)
     return render_template('index.html')
 
 while not done:
