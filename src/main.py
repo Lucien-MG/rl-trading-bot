@@ -24,15 +24,18 @@ done = False
 @app.route('/', methods = ["GET", "POST"])
 def index():
     if request.method == "POST":
-        df = pd.read_csv('logs.csv', sep=",")
-        df.iloc[:, 0].astype(float).plot()
-        base_url = '/static/images/rewards.png'
-        plt.savefig('src' + base_url)
-
-        df.iloc[:, 2].astype(float).plot()
-        base_url_cash = '/static/images/cash.png'
-        plt.savefig('src' + base_url_cash)
-        return render_template('reward.html', name='Rewards over time', url=base_url, url_cash=base_url_cash)
+        if request.form['submit_button'] == "view_value":
+            df = pd.read_csv('logs.csv', sep=",")
+            df.iloc[:, 0].astype(float).plot()
+            base_url = '/static/images/rewards.png'
+            plt.savefig('src' + base_url)
+            plt.clf()
+            df.iloc[:, 2].astype(float).plot()
+            base_url_cash = '/static/images/cash.png'
+            plt.savefig('src' + base_url_cash)
+            return render_template('reward.html', name='Rewards over time', url=base_url, url_cash=base_url_cash)
+        else:
+           return request.form['agent']
     return render_template('index.html')
 
 while not done:

@@ -3,7 +3,14 @@
    <body>
         <p> Coucou lucien</p>
         <form action="{{ url_for("index")}}" method="post">
-        <button type="submit">Click me</button>
+        <button type="submit" name="submit_button" value="view_value">View value</button>
+
+        <form action="{{ url_for("index")}}" method="post">
+        <select name="agent">
+        <option value="random">Random agent</option>
+        <option value="deiss">Deiss agent</option>
+        </select>
+        <button type="submit" name="submit_button" value="start_agent">Start agent</button>
    </body>
 </html>
 
