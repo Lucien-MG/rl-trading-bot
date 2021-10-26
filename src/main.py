@@ -34,7 +34,10 @@ def index():
             df.iloc[:, 2].astype(float).plot()
             base_url_cash = '/static/images/cash.png'
             plt.savefig('src' + base_url_cash)
-            return render_template('reward.html', name='Rewards over time', url=base_url, url_cash=base_url_cash)
+            return render_template('reward.html',
+                                   name='Rewards over time',
+                                   url=base_url,
+                                   url_cash=base_url_cash)
         else:
            run(done, state)
            agent = request.form['agent']
@@ -49,7 +52,7 @@ def run(done, state):
 
         state = next_state
         f = open("logs.csv", "a+")
-        f.write(str(reward) + ',' + str(done) + ',' + str(info["cash"]) + '\n')
+        f.write(str(reward) + ',' + str(done) + ',' + str(info["cash"]) + ',' + str(action) +'\n')
         f.close()
         print(state, reward, done, info)
 
