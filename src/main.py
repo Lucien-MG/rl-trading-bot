@@ -34,15 +34,21 @@ def index():
             df.iloc[:, 2].astype(float).plot()
             base_url_cash = '/static/images/cash.png'
             plt.savefig('src' + base_url_cash)
+            plt.clf()
             return render_template('reward.html',
                                    name='Rewards over time',
                                    url=base_url,
                                    url_cash=base_url_cash)
         else:
+           if os.path.exists("logs.csv"):
+             os.remove("logs.csv")
+             
            run(done, state)
-           agent = request.form['agent']
-           return agent
-    return render_template('index.html')
+           done = False
+           state = env.reset()
+           # agent = request.form['agent']
+           return render_template('index.html', finish=True)
+    return render_template('index.html', finish=False)
 
 def run(done, state):
     while not done:

@@ -17,6 +17,24 @@
       select
       {
       }
+      .loader{
+	display: none;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+      @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
   </head>
   
@@ -35,15 +53,32 @@
         <option value="deiss">Deiss agent</option>
       </select>
 
-      <button type="submit" name="submit_button" value="start_agent">Start agent</button>
+      <button type="submit" name="submit_button" value="start_agent" onclick="myLoader()">Start agent</button>
     </center>
+    </form>
+    <br>
+    <br>
+    
+    
+    <div style="display: flex; justify-content: center;">
+      <div id="loader" class="loader"></div>
 
-    <br>
-    <br>
-    <p> Coucou lucien</p>
-    <form action="{{ url_for("index")}}" method="post">
-    <button type="submit" name="submit_button" value="view_value">View value</button>
-        
+      {% if finish %}
+        <form id ="form" action="{{ url_for("index")}}" method="post">
+          <button type="submit" name="submit_button" value="view_value">View value</button>
+        </form>
+        <script>
+          document.getElementById("loader").style.display = "none";
+        </script>
+      {% endif %} 
+    </div>
+
+    <script>
+      function myLoader() {
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("form").style.display = "none";
+      }
+    </script>
         
    </body>
 </html>
