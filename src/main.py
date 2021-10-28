@@ -42,7 +42,7 @@ def index():
         else:
            if os.path.exists("logs.csv"):
              os.remove("logs.csv")
-             
+
            run(done, state)
            done = False
            state = env.reset()
