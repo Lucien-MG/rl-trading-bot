@@ -35,6 +35,12 @@ CONTENT_STYLE = {
     'margin-right': '5%',
     'top': 0,
     'padding': '20px 10px'
+    #'width': '40%'
+    # 'display': 'flex'
+}
+
+LOADING_STYLE = {
+    'margin-left': '20%',
 }
 
 TEXT_STYLE = {
@@ -59,7 +65,7 @@ sidebar = html.Div(
         html.H2('Our agents', style=TEXT_STYLE),
         html.Hr(),
 
-        dcc.Dropdown(id='my-dropdown', 
+        dcc.Dropdown(id='dropdown', 
                      options=[  {'label': 'Random', 'value': 'RDM'},
                                 {'label': 'Deiss', 'value': 'DSS'},
                                 {'label': 'Maitre Lucien', 'value': 'ML'},
@@ -81,21 +87,40 @@ sidebar = html.Div(
     style=SIDEBAR_STYLE,
 )
 
+content= html.Div(
+  [
+    dcc.Loading(id='loading',type='circle',
+	children=[
+		html.Div([
+    			dcc.Graph(id='reward'),
+    			html.Br(),
+    			dcc.Graph(id='money')
+  			]
+			,style=CONTENT_STYLE)
+		],
+        style=LOADING_STYLE
+	)
+  ]
+)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-app.layout = html.Div([sidebar])
+app.layout = html.Div([sidebar, content])
 
 
 @app.callback(
-    [Input('submit_button', 'n_clicks')],
-    [State('dropdown', 'value')])
+    Output('reward', 'figure'),
+    Output('money', 'figure'),
+    Input('submit_button', 'n_clicks'),
+    State('dropdown', 'value'))
 def call_agent(n_clicks, dropdown_value):
+    if not n_clicks:
+        return {'data': []}, {'data': []}
     global done, state
     if os.path.exists("logs.csv"):
         os.remove("logs.csv")
-    run(done, state)
     done = False
     state = env.reset()
+    run(done, state)
 
     df = pd.read_csv("logs.csv", header=None, names= ['reward', 'done', 'money', 'action'], delimiter=",")
     fig = px.line(df, y="reward", hover_name="reward")
@@ -104,16 +129,7 @@ def call_agent(n_clicks, dropdown_value):
     fig_cash = px.line(df, y="money", hover_name="money")
     fig_cash.update_layout(title_text='Money result', title_x=0.5)
 
-    return fig
-    # df = pd.read_csv('logs.csv', sep=",")
-    # df.iloc[:, 0].astype(float).plot()
-    # base_url = '/static/images/rewards.png'
-    # plt.savefig('src' + base_url)
-    # plt.clf()
-    # df.iloc[:, 2].astype(float).plot()
-    # base_url_cash = '/static/images/cash.png'
-    # plt.savefig('src' + base_url_cash)
-    # plt.clf()
+    return fig, fig_cash
 
 def run(done, state):
     while not done:
@@ -121,6 +137,7 @@ def run(done, state):
         print(action)
         next_state, reward, done, info = env.step(action)
 
+        print(info)
         state = next_state
         f = open("logs.csv", "a+")
         f.write(str(reward) + ',' + str(done) + ',' + str(info["cash"]) + ',' + str(action) +'\n')
@@ -129,6 +146,6 @@ def run(done, state):
 
 if __name__ == '__main__':
     if len(sys.argv) > 1 and sys.argv[1] == "--interactive":
-        app.run_server()
+        app.run_server(debug=True)
     else:
         run(done, state)
