@@ -65,14 +65,18 @@ sidebar = html.Div(
         html.H2('Our agents', style=TEXT_STYLE),
         html.Hr(),
 
-        dcc.Dropdown(id='dropdown', 
+        dcc.Dropdown(id='Agent', 
                      options=[  {'label': 'Random', 'value': 'RDM'},
                                 {'label': 'Deiss', 'value': 'DSS'},
                                 {'label': 'Maitre Lucien', 'value': 'ML'},
                                 {'label': 'Oui maitre', 'value': 'OM'}], value='RDM'),
         html.Br(),
 
-        html.Div(
+        dcc.Dropdown(id='Stock', 
+                     options=[  {'label': 'Paris', 'value': 'P'},
+                                {'label': 'Wall Street', 'value': 'WL'}], value='P'),
+        html.Br(),
+	html.Div(
             [
                 dbc.Button(
                     id='submit_button',
@@ -92,7 +96,7 @@ content= html.Div(
     dcc.Loading(id='loading',type='circle',
 	children=[
 		html.Div([
-    			dcc.Graph(id='reward'),
+    			dcc.Graph(id='reward'), 
     			html.Br(),
     			dcc.Graph(id='money')
   			]
@@ -111,7 +115,7 @@ app.layout = html.Div([sidebar, content])
     Output('reward', 'figure'),
     Output('money', 'figure'),
     Input('submit_button', 'n_clicks'),
-    State('dropdown', 'value'))
+    State('Agent', 'value'))
 def call_agent(n_clicks, dropdown_value):
     if not n_clicks:
         return {'data': []}, {'data': []}
