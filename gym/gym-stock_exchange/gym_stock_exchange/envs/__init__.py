@@ -1,1 +1,1 @@
-from gym_stock_exchange.envs.stock_exchange_env import StockExchangeEnv
+from gym_stock_exchange.envs.stock_exchange_env import SimulationStockExchangeEnv

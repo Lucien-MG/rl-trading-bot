@@ -17,11 +17,10 @@ class Actions(enum.Enum):
     Buy = 1
     Sell = 2
 
-class StockExchangeEnv(gym.Env):
+class SimulationStockExchangeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, stock_exchange_data_dir, state_size=10, cash=1000, commission_func=lambda x: x * 0.03):
-        print(len(Actions))
+    def __init__(self, stock_exchange_data_dir, state_size=10, cash=10000, commission_func=lambda x: x * 0.02):
         self.action_space = gym.spaces.Discrete(n=len(Actions))
         self.observation_space = gym.spaces.Discrete(state_size)
 
@@ -59,6 +58,7 @@ class StockExchangeEnv(gym.Env):
         reward = 0
         state = { 
             "history": self.df_stock_exchange[["opening", "max", "min", "closing"]][self.current_step - self.state_size:self.current_step].to_numpy(),
+            "cash": self.cash,
             "stock": self.stock
         }
 
@@ -91,7 +91,7 @@ class StockExchangeEnv(gym.Env):
         done = self.current_step >= len(self.df_stock_exchange) - 1
 
         # Update info:
-        info = { "cash": self.cash }
+        info = {}
 
         return state, reward, done, info
 
