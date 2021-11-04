@@ -13,5 +13,5 @@ class AgentRandom(AgentInterface):
     def action(self, state):
         return random.randint(0, self.action_space - 1)
 
-    def step(self):
+    def step(self, state, action, reward, next_state, done):
         pass

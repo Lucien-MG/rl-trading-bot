@@ -10,5 +10,5 @@ class AgentInterface(ABC):
         pass
 
     @abstractmethod
-    def step(self):
+    def step(self, state, action, reward, next_state, done):
         pass
