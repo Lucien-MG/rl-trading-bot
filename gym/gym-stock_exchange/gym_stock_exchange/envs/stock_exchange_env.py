@@ -97,6 +97,9 @@ class StockExchangeEnv(gym.Env):
 
     def reset(self):
         self.current_step = self.state_size
+        self.cash = 1000
+        self.max_cash = 1000
+        self.stock = 0
 
     def render(self, mode='human'):
         pass
