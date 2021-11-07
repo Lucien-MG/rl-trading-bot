@@ -4,7 +4,7 @@
 from application.css import *
 
 from application.callback import call_agent
-from application.html import sidebar, content
+from application.index_html import sidebar, content
 
 def run_app():
     app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
