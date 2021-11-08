@@ -9,4 +9,3 @@ def argument_parser():
     args = parser.parse_args()
 
     return args
-
