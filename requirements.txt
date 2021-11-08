@@ -3,6 +3,7 @@ click==8.0.3
 cloudpickle==2.0.0
 cycler==0.10.0
 dash==2.0.0
+dash-bootstrap-components==1.0.0
 dash-core-components==2.0.0
 dash-html-components==2.0.0
 dash-table==5.0.0
@@ -10,7 +11,7 @@ dataclasses==0.6
 Flask==2.0.2
 Flask-Compress==1.10.1
 gym==0.20.0
--e git+git@github.com:Lucien-MG/rl-trading-bot.git@3db2bb5ffb1398b7ef04b1a0a95978f13f587bc7#egg=gym_stock_exchange&subdirectory=gym/gym-stock_exchange
+-e git+git@github.com:Lucien-MG/rl-trading-bot.git@bf9837bac834781afa25d8ec8b874595f24aef8c#egg=gym_stock_exchange&subdirectory=gym/gym-stock_exchange
 importlib-metadata==4.8.1
 itsdangerous==2.0.1
 Jinja2==3.0.2
