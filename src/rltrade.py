@@ -20,4 +20,6 @@ from tools.cmd import argument_parser
 
 if __name__ == '__main__':
     args = argument_parser()
+    # check args //TODO
+    run_app()
     print(args)
