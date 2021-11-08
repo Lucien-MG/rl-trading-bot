@@ -15,11 +15,13 @@ import dash
 
 import plotly.express as px
 
+from broker import run
 from app import run_app
 from tools.cmd import argument_parser
 
 if __name__ == '__main__':
     args = argument_parser()
-    # check args //TODO
-    run_app()
-    print(args)
+    if args.interactive:
+        run_app()
+    else:
+        run()

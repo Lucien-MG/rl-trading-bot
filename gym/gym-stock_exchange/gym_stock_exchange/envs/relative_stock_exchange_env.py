@@ -57,18 +57,11 @@ class RelativeSimulationStockExchangeEnv(gym.Env):
         action = Actions(action)
 
         reward = 0
-        state = np.zero(shape=(4,self.state_size))
+        state = np.zero(shape=(3,self.state_size))
         state[0] = self.df_stock_exchange["max"][self.current_step - self.state_size:self.current_step].to_numpy()
         state[1] = self.df_stock_exchange["min"][self.current_step - self.state_size:self.current_step].to_numpy()
         state[2] = self.df_stock_exchange["closing"][self.current_step - self.state_size:self.current_step].to_numpy()
-        """
-        state = {
-            "history": self.df_stock_exchange[["opening", "max", "min", "closing"]][self.current_step - self.state_size:self.current_step].to_numpy(),
-            "cash": self.cash,
-            "stock": self.stock
-        }
-        """
-
+        print(state)
         # Next step:
         self.current_step += 1
 
