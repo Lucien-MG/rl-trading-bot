@@ -14,7 +14,7 @@ from collections import deque
 
 class Agent(AgentInterface):
     """ Initialize agent.
-        
+
     Args:
         nb_actions (int): number of actions available to the agent
         parameters (dict): contains all the parameters needed
@@ -64,16 +64,10 @@ class Agent(AgentInterface):
     def _preprocess_state(self, state):
         """ Apply preprocessing on state.
         """
-        torch_hist = torch.from_numpy(state['history'])
+        print(state)
+        state_torch = torch.from_numpy(state)
 
-        torch_hist = torch.reshape(torch_hist, (torch_hist.shape[0] * torch_hist.shape[1], 1))
-        torch_hist = torch.squeeze(torch_hist)
-
-        state = torch.cat((torch_hist, torch.tensor([state['stock']])))
-
-        state = self._normalize_state(state)
-
-        return state.float()
+        return state_torch.float()
 
     def load(self, path):
         """ Load weights at the path location.
@@ -114,7 +108,7 @@ class Agent(AgentInterface):
         """ Given the state, select an action.
         Args:
             state (obj): the current state of the environment.
-        
+
         Returns:
             action (int): an integer compatible with the task's action space.
         """
@@ -124,7 +118,7 @@ class Agent(AgentInterface):
             y_pred = self.primary(state.to(self.device))
         else:
             y_pred = torch.rand(self.nb_actions)
-        
+
         action = torch.argmax(y_pred).item()
 
         return action
@@ -149,7 +143,7 @@ class Agent(AgentInterface):
         self.memory.push(state, action, reward, next_state, done)
 
         self.rewards[-1] += reward
-        
+
         if len(self.memory) >= self.batch_size:
             self.learn()
 
@@ -171,7 +165,7 @@ class Agent(AgentInterface):
         """
         # Create random batch of self.batch_size steps
         states, actions, rewards, next_states, dones = self.memory.batch(batch_size=self.batch_size)
-        
+
         # Create torch tensors
         states = torch.stack(states).to(self.device)
         actions = torch.tensor(actions).to(self.device)
@@ -208,7 +202,7 @@ class Agent(AgentInterface):
 
 class ExperienceReplayBuffer():
     """ Initialize ExperienceReplayBuffer.
-        
+
     Args:
         size (int): Replay buffer's size.
     """
@@ -232,12 +226,15 @@ class DQN(nn.Module):
     def __init__(self, input_shape, nb_actions):
         super().__init__()
 
-        self.fc1 = nn.Linear(input_shape, 64)
-        self.fc2 = nn.Linear(64, 48)
-        self.fc3 = nn.Linear(48, nb_actions)
+        self.cv1 = nn.Conv1d(3, 1, 2)
+        self.fc2 = nn.Linear(9, 16)
+        self.fc3 = nn.Linear(16, nb_actions)
 
     def forward(self, x):
-        x = F.relu(self.fc1(x))
+        print(x.shape)
+        x = F.relu(self.cv1(x))
+        x = x.squeeze()
+        print(x.shape)
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
 
