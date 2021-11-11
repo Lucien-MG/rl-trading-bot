@@ -61,7 +61,7 @@ class RelativeSimulationStockExchangeEnv(gym.Env):
         state[0] = self.df_stock_exchange["max"][self.current_step - self.state_size:self.current_step].to_numpy()
         state[1] = self.df_stock_exchange["min"][self.current_step - self.state_size:self.current_step].to_numpy()
         state[2] = self.df_stock_exchange["closing"][self.current_step - self.state_size:self.current_step].to_numpy()
-        print(state)
+
         # Next step:
         self.current_step += 1
 

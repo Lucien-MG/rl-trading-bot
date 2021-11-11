@@ -5,10 +5,13 @@ from .agent_interface import AgentInterface
 
 import random
 
-class AgentRandom(AgentInterface):
+class Agent(AgentInterface):
 
-    def __init__(self, action_space):
-        self.action_space = action_space
+    def __init__(self, config):
+        self._set_config(config)
+
+    def _set_config(self, configuration):
+        self.__dict__ = { k:v for (k,v) in configuration.items() }
     
     def action(self, state):
         return random.randint(0, self.action_space - 1)

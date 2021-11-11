@@ -2,15 +2,34 @@
 #‑∗‑ coding: utf‑8 ‑∗‑
 
 import os
+import importlib
 
-def load_agent(name):
-    agent_lib = importlib.import_module("agent." + name)
-    agent_class = agent_lib.Agent
+def load_module(package, module_name):
+    # Build module path
+    mod_path = package + "." + name
 
-    return agent_class
+    # Import module
+    module = importlib.import_module(mod_path)
 
-def list_modules(path):
-    content = os.listdir(path)
-    print(content)
+    return module
 
-    return content
+def list_modules(package_name: str) -> list:
+    # Use importlib to find agents module directory
+    spec = importlib.util.find_spec(package_name)
+    path = spec.submodule_search_locations[0]
+
+    # List all mods
+    mods = os.listdir(path)
+
+    # Remove non-pertinent content
+    for e in ['agent_interface.py', '__pycache__', '__init__.py', 'tools']:
+        try:
+            mods.remove(e)
+        except:
+            # In this case, nothing need to be remove
+            pass
+
+    # Remove extensions
+    mods = map(lambda a: os.path.splitext(a)[0], mods)
+
+    return mods
