@@ -6,7 +6,7 @@ import importlib
 
 def load_module(package, module_name):
     # Build module path
-    mod_path = package + "." + name
+    mod_path = package + "." + module_name
 
     # Import module
     module = importlib.import_module(mod_path)

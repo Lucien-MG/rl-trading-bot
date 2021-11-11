@@ -19,8 +19,8 @@ def list_env() -> list:
     return module_loader.list_modules("gym_stock_exchange.envs")
 
 
-def load_agent(agent_name) -> class:
-    return load_module("agents", agent_name).Agent
+def load_agent(agent_name):
+    return module_loader.load_module("agents", agent_name).Agent
 
 
 def train(env_name, agent_name, agent_config, nb_episode):
