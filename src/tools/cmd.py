@@ -12,6 +12,9 @@ def argument_parser():
     parser.add_argument('-t', '--train', action='store_true', default=False,
                     help='Launch training.')
 
+    parser.add_argument('-r', '--run', action='store_true', default=False,
+                    help='Launch a run.')
+
     parser.add_argument('-la', '--list-agent', action='store_true', default=False,
                     help='If run in cmd mod, list all available agents.')
 

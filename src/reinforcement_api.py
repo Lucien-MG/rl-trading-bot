@@ -19,11 +19,11 @@ def list_env() -> list:
     return module_loader.list_modules("gym_stock_exchange.envs")
 
 
-def load_agent(agent_name):
+def load_agent(agent_name: str):
     return module_loader.load_module("agents", agent_name).Agent
 
 
-def train(env_name, agent_name, agent_config, nb_episode):
+def train(env_name: str, agent_name: str, agent_config: str, nb_episode: int):
     env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data_dir="data/")
 
     Agent = load_agent(agent_name)
@@ -38,7 +38,7 @@ def train(env_name, agent_name, agent_config, nb_episode):
     return
 
 
-def run(env_name, agent_name, agent_config):
+def run(env_name: str, agent_name: str, agent_config: str):
     env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data_dir="data/")
 
     Agent = load_agent(agent_name)

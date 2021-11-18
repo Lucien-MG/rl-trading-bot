@@ -7,6 +7,7 @@ import reinforcement_api
 from app import run_app
 from tools.cmd import argument_parser
 
+from tools.trace import Tracer
 
 def interactive_mod(args):
     run_app()
@@ -24,7 +25,8 @@ def cmd_mod(args):
     elif args.train:
         print("Launch training:")
         reinforcement_api.train(args.env, args.agent, args.config, args.episode)
-    else:
+    elif args.run:
+        print("Launch run:")
         reinforcement_api.run(args.env, args.agent, args.config)
 
 
@@ -32,7 +34,7 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = argument_parser()
 
-    # Choose program 
+    # Choose program mod
     if args.interactive:
         interactive_mod(args)
     else:

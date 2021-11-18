@@ -4,7 +4,7 @@
 import os
 import importlib
 
-def load_module(package, module_name):
+def load_module(package: str, module_name: str):
     # Build module path
     mod_path = package + "." + module_name
 
