@@ -32,10 +32,17 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = argument_parser()
 
+    if not os.path.isdir('./data'):
+        os.mkdir('./data')
+    if len(os.listdir('./data')) == 0:
+        gdd.download_file_from_google_drive(file_id='1xVuXfGWE-UGn4QEGKRen2YvCAUSW4RWQ',
+                                            dest_path='./data/2015_2017.csv', showsize=True)
 
-    gdd.download_file_from_google_drive(file_id='1k4HonZNa8KcHR3k1YVX3SJsQqhs8JjO6',
-                                            dest_path='./data/test',
-                                            showsize=True)
+        gdd.download_file_from_google_drive(file_id='1ejRCYRyNgwgoS12ln3EG5KyaVYzR2gJP',
+                                            dest_path='./data/2017_2019.csv', showsize=True)
+
+        gdd.download_file_from_google_drive(file_id='1O8sX4vM3ac1iPrq_IfybeEoc00M52YQd',
+                                            dest_path='./data/2019_2021.csv', showsize=True)
     if len(os.listdir('./data')) == 0:
         print("??") 
  
