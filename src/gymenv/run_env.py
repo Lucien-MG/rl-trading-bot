@@ -52,6 +52,12 @@ class RunEnv:
 
             step += 1
 
+
+            # Ici on ecrit dans logs.csv
+
+            with open('logs.csv', 'a+') as f:
+                f.write(str(sum(reward)) + ',' + str(done) + ',' + str(info["cash"]) + ', idk\n')
+
             if done or (self.limit_step and step >= self.limit_step):
                 break
 
