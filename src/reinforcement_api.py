@@ -7,8 +7,8 @@ import gym_stock_exchange
 import tools.module_loader as module_loader
 import tools.utils as utils
 
-from env.run_env import RunEnv
-from env.train_env import TrainEnv
+from gymenv.run_env import RunEnv
+from gymenv.train_env import TrainEnv
 
 
 def list_agent() -> list:

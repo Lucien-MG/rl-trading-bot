@@ -100,10 +100,12 @@ class RelativeSimulationStockExchangeEnv(gym.Env):
         self.cash = 1000
         self.max_cash = 1000
         self.stock = 0
+
         state = np.zeros(shape=(3,self.state_size))
         state[0] = self.df_stock_exchange["max"][self.current_step - self.state_size:self.current_step].to_numpy()
         state[1] = self.df_stock_exchange["min"][self.current_step - self.state_size:self.current_step].to_numpy()
         state[2] = self.df_stock_exchange["closing"][self.current_step - self.state_size:self.current_step].to_numpy()
+
         return state
 
 
