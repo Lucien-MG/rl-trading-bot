@@ -1,11 +1,11 @@
 from gym.envs.registration import register
 
 register(
-    id='gym_simulation_stock_exchange-v0',
+    id='stock_exchange_env-v0',
     entry_point='gym_stock_exchange.envs:SimulationStockExchangeEnv',
 )
 
 register(
-    id='gym_simulation_relative_stock_exchange-v0',
+    id='relative_stock_exchange_env-v0',
     entry_point='gym_stock_exchange.envs:RelativeSimulationStockExchangeEnv',
 )

@@ -32,6 +32,7 @@ if __name__ == '__main__':
     # Parse command line arguments
     args = argument_parser()
 
+    # DL csv
     if not os.path.isdir('./data'):
         os.mkdir('./data')
     if len(os.listdir('./data')) == 0:
@@ -45,6 +46,8 @@ if __name__ == '__main__':
                                             dest_path='./data/2019_2021.csv', showsize=True)
     if len(os.listdir('./data')) == 0:
         print("??") 
+
+    # End DL
  
     # Choose program mod
     if args.interactive:
