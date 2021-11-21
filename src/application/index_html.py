@@ -7,10 +7,31 @@ from dash import html
 
 from .css import *
 
+from tools.utils import load_config
+
 def add_layout(reinforcement_api):
     
     agents = [{'label': agent.capitalize(), 'value': agent} for agent in reinforcement_api.list_agent()]
     envs = [{'label': env.capitalize(), 'value': env} for env in reinforcement_api.list_env()]
+    config = load_config('agent_config.yaml')
+    dqn = []
+    for i in list(config):
+        if i =='parameters':
+            parameters = config[i]
+            for j in list(parameters):
+                dqn.append(
+                    dbc.Row([
+                        html.Div(j, style=AUTO),
+                        dcc.Input(value = parameters[j], style=AUTO, maxLength=10, size='2')
+                    ], style={'display':'flex','align-item':'center','justify-content':'space-between'}))
+                #dqn.append(html.Br())
+        else:
+            dqn.append(
+                dbc.Row([
+                    html.Div(i, style=AUTO),
+                    dcc.Input(value = config[i], style=AUTO, maxLength=10, size='2')
+                ], style={'display':'flex','align-item':'center','justify-content':'space-between'}))
+            #dqn.append(html.Br())
 
     sidebar = html.Div([
 	    	html.Div([
@@ -38,20 +59,32 @@ def add_layout(reinforcement_api):
                     'justify-content': 'space-between'}),
             html.Hr(),
 
-            dcc.Dropdown(id='Agent', options= agents, value=agents[0].get('value')),
+            html.Div([dcc.Dropdown(id='Agent', options= agents, value=agents[0].get('value'), clearable=False, disabled=False),
             html.Br(),
-
-            dcc.Dropdown(id='Stock', options= envs, value=envs[0].get('value')),
+            dcc.Dropdown(id='Stock', options= envs, value=envs[0].get('value'), clearable=False, disabled=False)]),
             html.Br(),
-
             html.Div([
                 dbc.Button(
                     id='submit_button',
                     n_clicks=0,
                     children='Submit',
                     color='primary'),
-                ], className="d-grid gap-2 col-6 mx-auto")
-	   
+                ], className="d-grid gap-2 col-6 mx-auto"),
+
+            html.Br(),
+
+            html.Div(
+                dbc.Row([
+                    html.Div('Folder', style=AUTO),
+                    dcc.Input(value = '', style=AUTO, maxLength=10, size='7')
+                ], style = ROW_SIDEBAR
+            ), style = HIDDEN, id = 'folder'),
+            
+
+            html.Br(),
+
+            html.Div(dqn, id='dqn', style = HIDDEN),
+
             ],  style=SIDEBAR_STYLE, id='sidebar')
 
     content = html.Div([

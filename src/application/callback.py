@@ -6,8 +6,9 @@ import plotly.express as px
 import dash
 
 from dash.dependencies import Input, Output, State
+from dash import html
 
-from application.css import SIDEBAR_STYLE, SIDEBAR_STYLE_HIDDEN
+from application.css import SIDEBAR_STYLE, HIDDEN, NONE
 from application.css import CONTENT_STYLE, CONTENT_STYLE_HIDDEN
 
 from agents.random import Agent
@@ -19,12 +20,12 @@ from tools.utils import pretty_print_list
 
 def add_callbacks(app):
 
-    @app.callback(
-        Output('reward', 'figure'),
-        Output('money', 'figure'),
-        Input('submit_button', 'n_clicks'),
-        State('Agent', 'value'),
-        State('Stock', 'value'))
+    #@app.callback(
+    #    Output('reward', 'figure'),
+    #    Output('money', 'figure'),
+    #    Input('submit_button', 'n_clicks'),
+    #    State('Agent', 'value'),
+    #    State('Stock', 'value'))
     def call_agent(n_clicks, agent_value, stock_value):
         if not n_clicks:
             return {'data': []}, {'data': []}
@@ -48,6 +49,24 @@ def add_callbacks(app):
 
         return fig, fig_cash
 
+    @app.callback(
+        Output('submit_button', 'style'),
+        Output('Agent', 'disabled'),
+        Output('Stock', 'disabled'),
+        Output('folder', 'style'),
+        Output('dqn', 'style'),
+        Input('submit_button', 'n_clicks'),
+        State('Agent', 'value'))
+    def show_settings(n_clicks, agent_value):
+        if not n_clicks:
+            return  NONE, False, False, HIDDEN, HIDDEN
+        
+        if agent_value == 'dqn_v1':
+            return HIDDEN, True, True, NONE, NONE
+        elif agent_value == 'random':
+            return HIDDEN, True, True, NONE, HIDDEN
+        return HIDDEN, True, True, NONE, HIDDEN
+
 
     @app.callback(
         [
@@ -61,11 +80,14 @@ def add_callbacks(app):
     def update_style(hide_n, show_n):
         ctx = dash.callback_context
 
-        if not ctx.triggered:
+        if not ctx.triggered or ctx.triggered[0]['value'] == 0:
             return [SIDEBAR_STYLE, CONTENT_STYLE]
         else:
             button_id = ctx.triggered[0]['prop_id'].split('.')[0]
             if button_id == 'hide':
-                return [SIDEBAR_STYLE_HIDDEN, CONTENT_STYLE_HIDDEN]
+                return [HIDDEN, CONTENT_STYLE_HIDDEN]
             return [SIDEBAR_STYLE, CONTENT_STYLE]
 
+
+        
+        

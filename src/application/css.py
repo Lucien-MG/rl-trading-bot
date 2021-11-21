@@ -10,10 +10,21 @@ SIDEBAR_STYLE = {
     'padding': '20px 10px',
     'background-color': '#f8f9fa'
 }
-SIDEBAR_STYLE_HIDDEN = {
-	'display': 'none'
+
+ROW_SIDEBAR = {
+    'display': 'flex',
+    'align-item': 'center',
+    'justify-content': 'space-between'
 }
 
+HIDDEN = {
+	'display': 'none'
+}
+NONE = {
+}
+AUTO={
+    'width': 'auto'
+}
 
 
 LOADING_STYLE = {
