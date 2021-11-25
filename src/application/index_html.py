@@ -76,7 +76,7 @@ def add_layout(reinforcement_api):
             html.Div(
                 dbc.Row([
                     html.Div('Folder', style=AUTO),
-                    dcc.Input(value = '', style=AUTO, maxLength=10, size='7')
+                    dcc.Input(value = '', style=AUTO, maxLength=10, size='7', id='folder_value')
                 ], style = ROW_SIDEBAR
             ), style = HIDDEN, id = 'folder'),
             
@@ -84,6 +84,17 @@ def add_layout(reinforcement_api):
             html.Br(),
 
             html.Div(dqn, id='dqn', style = HIDDEN),
+
+            html.Br(),
+
+            html.Div([
+                dbc.Button(
+                    id='submit_button_2',
+                    n_clicks=0,
+                    children='Submit',
+                    color='primary',
+                    style=HIDDEN),
+                ], className="d-grid gap-2 col-6 mx-auto"),
 
             ],  style=SIDEBAR_STYLE, id='sidebar')
 
