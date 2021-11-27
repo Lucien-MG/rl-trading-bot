@@ -13,7 +13,7 @@ from application.css import CONTENT_STYLE, CONTENT_STYLE_HIDDEN
 
 from agents.random import Agent
 from reinforcement_api import train, list_env
-from tools.utils import pretty_print_list, save_config
+from tools.utils import *
 
 #import gym
 #import gym_stock_exchange
@@ -27,8 +27,9 @@ def add_callbacks(app):
         State('Agent', 'value'),
         State('Stock', 'value'),
         State('folder_value', 'value'),
-        State('dqn', 'children'))
-    def call_agent(n_clicks, agent_value, stock_value, folder_value, dqn_values):
+        State('dqn', 'children'),
+        State('random', 'children'))
+    def call_agent(n_clicks, agent_value, stock_value, folder_value, dqn_values, rdm_values):
         if not n_clicks:
             return {'data': []}, {'data': []}
         
@@ -41,11 +42,13 @@ def add_callbacks(app):
             os.mkdir(folder)
         
         if agent_value == 'dqn_v1': 
-            save_config(dqn_values, folder)
+            save_dqn_config(dqn_values, folder)
+        elif agent_value =='random':
+            save_random_config(rdm_values, folder)
 
 
         # THREAD 
-        train(stock_value, agent_value, folder + '/agent_config.yaml', 2)
+        train(stock_value, agent_value, folder + '/config.yaml', 2)
 
         # TODO pb on affiche que le dernier épisode
         
@@ -65,18 +68,19 @@ def add_callbacks(app):
         Output('Stock', 'disabled'),
         Output('folder', 'style'),
         Output('dqn', 'style'),
+        Output('random', 'style'),
         Output('submit_button_2', 'style'),
         Input('submit_button', 'n_clicks'),
         State('Agent', 'value'))
     def show_settings(n_clicks, agent_value):
         if not n_clicks:
-            return  NONE, False, False, HIDDEN, HIDDEN, HIDDEN
-        
+            return  NONE, False, False, HIDDEN, HIDDEN, HIDDEN, HIDDEN
+        print(agent_value) 
         if agent_value == 'dqn_v1':
-            return HIDDEN, True, True, NONE, NONE, NONE
+            return HIDDEN, True, True, NONE, NONE, HIDDEN, NONE
         elif agent_value == 'random':
-            return HIDDEN, True, True, NONE, HIDDEN, NONE
-        return HIDDEN, True, True, NONE, HIDDEN, NONE
+            return HIDDEN, True, True, NONE, HIDDEN, NONE, NONE
+        return HIDDEN, True, True, NONE, HIDDEN, HIDDEN, NONE
 
 
     @app.callback(

@@ -15,7 +15,7 @@ def pretty_print_list(iterable):
     for e in iterable:
         print("  -", e)
 
-def save_config(dic, folder):
+def save_dqn_config(dic, folder):
     config = dict()
     parameters = dict()
 
@@ -30,10 +30,27 @@ def save_config(dic, folder):
             config[name] = value
     config["parameters"] = parameters
 
-    with open(folder + "/agent_config.yaml", 'w') as f:
+    with open(folder + "/config.yaml", 'w') as f:
         yaml.dump(config, f)
 
     pretty_print_dic(config, 1)
+
+def save_random_config(dic, folder):
+    config = dict()
+    
+    for i in dic:
+        child = i["props"]["children"]
+
+        name  = child[0]["props"]["children"]
+        value = child[1]["props"]["value"]
+
+        config[name] = "" + value
+    
+    with open(folder + "/config.yaml", 'w') as f:
+        yaml.dump(config, f)
+
+    pretty_print_dic(config, 1)
+        
         
 def pretty_print_dic(dic, nb):
     print(" " * nb, "{")

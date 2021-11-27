@@ -13,11 +13,25 @@ def add_layout(reinforcement_api):
     
     agents = [{'label': agent.capitalize(), 'value': agent} for agent in reinforcement_api.list_agent()]
     envs = [{'label': env.capitalize(), 'value': env} for env in reinforcement_api.list_env()]
-    config = load_config('agent_config.yaml')
+    
+    dqn_config = load_config('agent_config.yaml')
+    random_config = load_config('config.yaml')
+
     dqn = []
-    for i in list(config):
+    random = []
+
+    for i in list(random_config):
+        random.append(
+            dbc.Row([
+                html.Div(i, style=AUTO),
+                dcc.Input(value = random_config[i], style=AUTO, maxLength=10, size='2')
+            ], style={'display':'flex','align-item': 'center','justify-content': 'space-between'})
+)
+
+    print(random)
+    for i in list(dqn_config):
         if i =='parameters':
-            parameters = config[i]
+            parameters = dqn_config[i]
             for j in list(parameters):
                 dqn.append(
                     dbc.Row([
@@ -29,7 +43,7 @@ def add_layout(reinforcement_api):
             dqn.append(
                 dbc.Row([
                     html.Div(i, style=AUTO),
-                    dcc.Input(value = config[i], style=AUTO, maxLength=10, size='2')
+                    dcc.Input(value = dqn_config[i], style=AUTO, maxLength=10, size='2')
                 ], style={'display':'flex','align-item':'center','justify-content':'space-between'}))
             #dqn.append(html.Br())
 
@@ -83,8 +97,8 @@ def add_layout(reinforcement_api):
 
             html.Br(),
 
+            html.Div(random, id='random', style = HIDDEN),
             html.Div(dqn, id='dqn', style = HIDDEN),
-
             html.Br(),
 
             html.Div([
