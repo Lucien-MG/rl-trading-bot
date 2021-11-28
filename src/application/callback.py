@@ -8,15 +8,15 @@ import dash
 from dash.dependencies import Input, Output, State
 from dash import html
 
-from application.css import SIDEBAR_STYLE, HIDDEN, NONE
-from application.css import CONTENT_STYLE, CONTENT_STYLE_HIDDEN
+from application.css import *
+from application.index_html import page_train, page_product, page_404
 
 from agents.random import Agent
+
 from reinforcement_api import train, list_env
+
 from tools.utils import *
 
-#import gym
-#import gym_stock_exchange
 
 def add_callbacks(app):
 
@@ -44,7 +44,8 @@ def add_callbacks(app):
         if agent_value == 'dqn_v1': 
             save_dqn_config(dqn_values, folder)
         elif agent_value =='random':
-            save_random_config(rdm_values, folder)
+            save_dqn_config(rdm_values, folder)
+            #save_random_config(rdm_values, folder)
 
 
         # THREAD 
@@ -103,6 +104,15 @@ def add_callbacks(app):
                 return [HIDDEN, CONTENT_STYLE_HIDDEN]
             return [SIDEBAR_STYLE, CONTENT_STYLE]
 
-
+    @app.callback(
+        Output('page-content', 'children'),
+        Input('url', 'pathname'))
+    def display_page(pathname):
+        if pathname == '/':
+            return page_train
+        elif pathname == '/product':
+            return page_product
+        else:
+            return page_404
         
         

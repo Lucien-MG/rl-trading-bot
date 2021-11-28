@@ -11,6 +11,17 @@ SIDEBAR_STYLE = {
     'background-color': '#f8f9fa'
 }
 
+SIDEBAR_HEADER = {
+    'width': '95%',
+    'margin-left': '5%'
+}
+
+BUTTON_HIDE = {
+    'width': '5%',
+    'position': 'relative',
+    'left': '-3em'
+}
+
 ROW_SIDEBAR = {
     'display': 'flex',
     'align-item': 'center',
