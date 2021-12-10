@@ -122,7 +122,7 @@ content =html.Div([
 			            ], style=LOADING_STYLE)
 		            ], style=tab_style, selected_style=tab_selected_style),
 		
-                dcc.Tab(label='Agent', children=[
+                dcc.Tab(id = "Info_Agent", label='Agent', children=[
 			        html.H2('Some informations about our agent !')
 		            ], style=tab_style, selected_style=tab_selected_style)
 	            ])], style=CONTENT_STYLE, id='content')])
@@ -135,3 +135,15 @@ layout = html.Div([
 page_train = html.Div([sidebar, content])
 page_product = html.Div(dcc.Link("Go to train page", href='/'))
 page_404 = html.Div([html.H1("404 not found"), dcc.Link("Go to train page", href='/')])
+
+info_dqn = html.Div([
+    html.H1("DQN"),
+    html.Br(),
+    html.P("Q-learning is a model-free reinforcement learning algorithm to learn the value of an action in a particular state. It does not require a model of the environment (hence 'model-free'), and it can handle problems with stochastic transitions and rewards without requiring adaptions."),
+    html.Br(),
+    html.P("For any finite Markov decision progress (FMDP), Q-learning finds an optimal policy in the sense of maximizing the expected value of the total reward over ay and all successive steps, starting from the current state. Q-learning can identify and optimal action-selection policy for any given FMDP, given infinite exploration time and a partly-random policy. 'Q' refers to the funtion that the algorithm computes - the expected rewards for an action taken in a give state.")])
+
+info_random = html.Div([
+    html.H1("Random agent"),
+    html.Br(),
+    html.P("This is a random agent taking random desicions based on the same probability (Buy/Sell/Skip) !")])

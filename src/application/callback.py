@@ -9,7 +9,7 @@ from dash.dependencies import Input, Output, State
 from dash import html
 
 from application.css import *
-from application.index_html import page_train, page_product, page_404
+from application.index_html import page_train, page_product, page_404, info_dqn, info_random
 
 from agents.random import Agent
 
@@ -114,5 +114,13 @@ def add_callbacks(app):
             return page_product
         else:
             return page_404
+    
+    @app.callback(
+        Output('Info_Agent', 'children'),
+        Input('Agent', 'value'))
+    def display_info(value):
+        if value == 'dqn_v1':
+            return info_dqn
+        return info_random
         
         
