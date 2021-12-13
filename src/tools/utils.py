@@ -24,11 +24,11 @@ def save_dqn_config(dic, folder):
 
         name  = child[0]["props"]["children"]
         value = child[1]["props"]["value"]
-        if name != "action_space":
-            parameters[name] = value
-        else:
-            config[name] = value
-    config["parameters"] = parameters
+        #if name != "action_space":
+        #    parameters[name] = value
+        #else:
+        config[name] = str(value)
+    #config["parameters"] = parameters
 
     with open(folder + "/config.yaml", 'w') as f:
         yaml.dump(config, f)
@@ -44,7 +44,7 @@ def save_random_config(dic, folder):
         name  = child[0]["props"]["children"]
         value = child[1]["props"]["value"]
 
-        config[name] = "" + value
+        config[name] = str(value)
     
     with open(folder + "/config.yaml", 'w') as f:
         yaml.dump(config, f)

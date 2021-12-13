@@ -20,6 +20,8 @@ class Agent(AgentInterface):
     def __init__(self, parameters):
         self._set_parameters(parameters)
 
+        self.input_shape = [3, 10]
+
         self.primary = DQN(self.input_shape, self.action_space).to(self.device)
         self.target = DQN(self.input_shape, self.action_space).to(self.device)
         self.optimizer = optim.SGD(self.primary.parameters(), lr=self.alpha)

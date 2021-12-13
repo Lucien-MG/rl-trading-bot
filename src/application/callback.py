@@ -40,14 +40,14 @@ def add_callbacks(app):
 
         if not os.path.isdir(folder):
             os.mkdir(folder)
-        
+       
         if agent_value == 'dqn_v1': 
             save_dqn_config(dqn_values, folder)
         elif agent_value =='random':
             save_dqn_config(rdm_values, folder)
             #save_random_config(rdm_values, folder)
 
-
+        print(stock_value)
         # THREAD 
         train(stock_value, agent_value, folder + '/config.yaml', 2)
 

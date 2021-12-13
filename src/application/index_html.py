@@ -29,6 +29,7 @@ for i in list(random_config):
         ], style = ROW_SIDEBAR)
     )
 
+print(dqn_config)
 for i in list(dqn_config):
     if i =='parameters':
         parameters = dqn_config[i]
@@ -38,6 +39,13 @@ for i in list(dqn_config):
                     html.Div(j, style=AUTO),
                     dcc.Input(value = parameters[j], style=AUTO, maxLength=10, size='2')
                 ], style = ROW_SIDEBAR))
+    elif i == 'input_shape':
+        dqn.append(
+            dbc.Row([
+                html.Div(i, style=AUTO),
+                dcc.Input(value = dqn_config[i][0], style=AUTO, maxLength=10, size='2'),
+                dcc.Input(value = dqn_config[i][1], style=AUTO, maxLength=10, size='2')
+            ], style = ROW_SIDEBAR))
     else:
         dqn.append(
             dbc.Row([

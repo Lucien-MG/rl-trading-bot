@@ -1,6 +1,4 @@
 action_space: 3
-input_shape: [3, 10]
-
 
 alpha: 0.01
 gamma: 0.99
@@ -11,4 +9,5 @@ memory_size: 50000
 batch_size: 128
 update_step: 8
 tau: 0.001
+
 device: "cpu"
