@@ -27,7 +27,7 @@ def argument_parser():
     parser.add_argument('-a', '--agent', type=str, default="random",
                     help='If run in cmd mod, choose the agent to use.')
 
-    parser.add_argument('-c', '--config', type=str, default="./config.yaml",
+    parser.add_argument('-c', '--config', type=str, default="./agent_config.yaml",
                     help='If run in cmd mod, choose the config to use.')
 
     parser.add_argument('-l', '--load', type=str, default="./weights.pt",

@@ -24,14 +24,14 @@ def load_agent(agent_name: str):
 
 
 def train(env_name: str, agent_name: str, agent_config: str, nb_episode: int):
-    env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data_dir="data/")
+    env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data="data/cac40.csv")
 
     Agent = load_agent(agent_name)
     config = utils.load_config(agent_config)
 
     agent = Agent(config)
 
-    renv = TrainEnv(env, agent, nb_episode=nb_episode, render=None)
+    renv = TrainEnv(env, agent, log_path="train_log.csv", nb_episode=nb_episode, render=None)
 
     res = renv.train()
 
@@ -39,7 +39,7 @@ def train(env_name: str, agent_name: str, agent_config: str, nb_episode: int):
 
 
 def run(env_name: str, agent_name: str, agent_config: str):
-    env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data_dir="data/")
+    env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data="data/cac40.csv")
 
     Agent = load_agent(agent_name)
     config = utils.load_config(agent_config)

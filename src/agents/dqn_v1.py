@@ -7,7 +7,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-import torch.utils.tensorboard as tensorboard
 
 from random import choices
 from collections import deque
@@ -16,15 +15,13 @@ class Agent(AgentInterface):
     """ Initialize agent.
 
     Args:
-        nb_actions (int): number of actions available to the agent
         parameters (dict): contains all the parameters needed
     """
-    def __init__(self, input_shape, nb_actions, parameters):
+    def __init__(self, parameters):
         self._set_parameters(parameters)
-        self.nb_actions = nb_actions
 
-        self.primary = DQN(input_shape, nb_actions).to(self.device)
-        self.target = DQN(input_shape, nb_actions).to(self.device)
+        self.primary = DQN(self.input_shape, self.action_space).to(self.device)
+        self.target = DQN(self.input_shape, self.action_space).to(self.device)
         self.optimizer = optim.SGD(self.primary.parameters(), lr=self.alpha)
 
         self.memory = ExperienceReplayBuffer(size=self.memory_size)
@@ -33,9 +30,6 @@ class Agent(AgentInterface):
 
         self.eval_mode = False
         self.step_count = 0
-
-        if self.tensorboard_log:
-            self.writer = tensorboard.SummaryWriter()
 
     def _set_parameters(self, configuration):
         self.__dict__ = { k:v for (k,v) in configuration.items() }
@@ -64,7 +58,6 @@ class Agent(AgentInterface):
     def _preprocess_state(self, state):
         """ Apply preprocessing on state.
         """
-        print(state)
         state_torch = torch.from_numpy(state)
 
         return state_torch.float()
@@ -115,9 +108,9 @@ class Agent(AgentInterface):
         state = self._preprocess_state(state)
 
         if not self.eval_mode and torch.rand(1).item() > self.epsilon:
-            y_pred = self.primary(state.to(self.device))
+            y_pred = self.primary(state.unsqueeze(dim=0).to(self.device))
         else:
-            y_pred = torch.rand(self.nb_actions)
+            y_pred = torch.rand(self.action_space)
 
         action = torch.argmax(y_pred).item()
 
@@ -152,10 +145,10 @@ class Agent(AgentInterface):
 
         if done:
             self._update_epsilon()
-            self.log('Epsilon', self.epsilon)
+            # self.log('Epsilon', self.epsilon)
 
             if len(self.memory) >= self.batch_size:
-                self.log('Reward', sum(self.rewards) / len(self.rewards))
+                # self.log('Reward', sum(self.rewards) / len(self.rewards))
                 self.rewards.append(0)
 
         self.step_count += 1
@@ -192,7 +185,7 @@ class Agent(AgentInterface):
         # MSE Error:
         error = torch.mean(torch.pow(states_action_values - target_reward, 2))
 
-        self.log('Loss', error)
+        # self.log('Loss', error)
 
         # Optimize model
         self.optimizer.zero_grad()
@@ -223,18 +216,16 @@ class ExperienceReplayBuffer():
 
 class DQN(nn.Module):
 
-    def __init__(self, input_shape, nb_actions):
+    def __init__(self, input_shape, action_space):
         super().__init__()
 
         self.cv1 = nn.Conv1d(3, 1, 2)
         self.fc2 = nn.Linear(9, 16)
-        self.fc3 = nn.Linear(16, nb_actions)
+        self.fc3 = nn.Linear(16, action_space)
 
     def forward(self, x):
-        print(x.shape)
         x = F.relu(self.cv1(x))
         x = x.squeeze()
-        print(x.shape)
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
 

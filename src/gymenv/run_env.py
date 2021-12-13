@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # ‑∗‑ coding: utf‑8 ‑∗‑
 
+from .csvlog import CsvLogger
+
 class RunEnv:
     """ Initialize the RunEnv class.
     Args:
@@ -10,7 +12,7 @@ class RunEnv:
         env: instance of OpenAI Gym's environment
         agent: agent that will interact with the environment.
     """
-    def __init__(self, env, agent, limit_step=None, render=None):
+    def __init__(self, env, agent, log_path=None, limit_step=None, render=None):
         self.env = env
         self.agent = agent
 
@@ -18,6 +20,8 @@ class RunEnv:
         self.render = render
 
         self.rewards = []
+
+        self.logger = CsvLogger(log_path, ["reward", "cash", "stock", "done"]) if log_path else None
 
     def step(self, state):
         # agent choose action with state observation
@@ -36,6 +40,9 @@ class RunEnv:
         state = self.env.reset()
         step = 0
 
+        if self.logger:
+            self.logger.open()
+
         while True:
             # Use the render mode if needed
             if self.render:
@@ -52,13 +59,18 @@ class RunEnv:
 
             step += 1
 
-
-            # Ici on ecrit dans logs.csv
-
-            with open('logs.csv', 'a+') as f:
-                f.write(str(sum(self.rewards)) + ',' + str(done) + ',' + str(self.env.cash) + ', idk\n')
+            # Write logs:
+            if self.logger:
+                self.logger.register(
+                    {"reward": reward,
+                     "cash": self.env.cash,
+                     "stock": self.env.stock,
+                     "done": done})
 
             if done or (self.limit_step and step >= self.limit_step):
                 break
+
+        if self.logger:
+            self.logger.close()
 
         return self.rewards

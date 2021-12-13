@@ -7,7 +7,7 @@ import time
 from queue import Queue
 from threading import Thread
 
-class Tracer:
+class CsvLogger:
 
     def __init__(self, path, fields, cooldown=3):
         self.path = path
