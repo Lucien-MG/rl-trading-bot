@@ -23,15 +23,17 @@ def load_agent(agent_name: str):
     return module_loader.load_module("agents", agent_name).Agent
 
 
-def train(env_name: str, agent_name: str, agent_config: str, nb_episode: int):
+def train(env_name: str, agent_name: str, agent_config: str, nb_episode: int, log_path: str):
     env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data="data/cac40.csv")
 
     Agent = load_agent(agent_name)
     config = utils.load_config(agent_config)
 
-    agent = Agent(config)
+    utils.pretty_print_dic(config, 1)
 
-    renv = TrainEnv(env, agent, log_path="train_log.csv", nb_episode=nb_episode, render=None)
+    agent = Agent(config)
+    print(nb_episode)
+    renv = TrainEnv(env, agent, nb_episode=nb_episode, log_path=log_path, render=None)
 
     res = renv.train()
 

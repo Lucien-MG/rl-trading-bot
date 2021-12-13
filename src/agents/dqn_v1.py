@@ -19,7 +19,8 @@ class Agent(AgentInterface):
     """
     def __init__(self, parameters):
         self._set_parameters(parameters)
-
+        
+        self.action_space= int(self.action_space)
         self.input_shape = [3, 10]
 
         self.primary = DQN(self.input_shape, self.action_space).to(self.device)

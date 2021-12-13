@@ -49,12 +49,12 @@ def add_callbacks(app):
 
         print(stock_value)
         # THREAD 
-        train(stock_value, agent_value, folder + '/config.yaml', 2)
+        train(stock_value, agent_value, agent_config=folder + '/config.yaml', nb_episode=2, log_path=folder + '/logs.csv')
 
         # TODO pb on affiche que le dernier épisode
         
 
-        df = pd.read_csv("logs.csv", header=None, names= ['reward', 'done', 'money', 'action'], delimiter=",")
+        df = pd.read_csv(folder + "/logs.csv", header=None, names= ['reward', 'done', 'money', 'action'], delimiter=",")
         fig = px.line(df, y="reward", hover_name="reward")
         fig.update_layout(title_text='Reward result', title_x=0.5)
 

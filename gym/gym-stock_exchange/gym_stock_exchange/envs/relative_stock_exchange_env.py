@@ -49,7 +49,7 @@ class RelativeSimulationStockExchangeEnv(gym.Env):
         self.stock = 0
 
     def _read_csv(self, path):
-        df_stock_exchange = pd.read_csv(path, sep=',|;', header=None, names=["code", "date", "opening", "max", "min", "closing", "stock"], engine='python')
+        df_stock_exchange = pd.read_csv(path, sep=',|;', header=1, names=["code", "date", "opening", "max", "min", "closing", "stock"], engine='python')
 
         for col in ["opening", "max", "min", "closing"]:
             if df_stock_exchange[col].dtype.name != "float64":

@@ -27,7 +27,7 @@ def save_dqn_config(dic, folder):
         #if name != "action_space":
         #    parameters[name] = value
         #else:
-        config[name] = str(value)
+        config[name] = value
     #config["parameters"] = parameters
 
     with open(folder + "/config.yaml", 'w') as f:
@@ -44,7 +44,7 @@ def save_random_config(dic, folder):
         name  = child[0]["props"]["children"]
         value = child[1]["props"]["value"]
 
-        config[name] = str(value)
+        config[name] = value
     
     with open(folder + "/config.yaml", 'w') as f:
         yaml.dump(config, f)
@@ -56,6 +56,7 @@ def pretty_print_dic(dic, nb):
     print(" " * nb, "{")
     for e in list(dic.keys()):
         print(" " * nb, "-", e, ":")
+        print(" " * nb, type(dic[e]))
         if type(dic[e]) == dict:
             pretty_print_dic(dic[e], nb + 1)
         elif type(dic[e]) == list:
