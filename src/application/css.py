@@ -37,6 +37,13 @@ AUTO={
     'width': 'auto'
 }
 
+TITLE_TEXT={
+    'text-align': 'center'
+}
+WRONG_TEXT={
+    'text-align': 'center',
+    'color': 'red'
+}
 
 LOADING_STYLE = {
     'margin-left': '20%',

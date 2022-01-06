@@ -1,19 +1,23 @@
 #!/usr/bin/python3
 #‑∗‑ coding: utf‑8 ‑∗‑
 import os
+
 import pandas as pd
+
 import plotly.express as px
+import plotly.graph_objects as go
+
 import dash
 
 from dash.dependencies import Input, Output, State
 from dash import html
 
 from application.css import *
-from application.index_html import page_train, page_product, page_404, info_dqn, info_random
+from application.index_html import *
 
 from agents.random import Agent
 
-from reinforcement_api import train, list_env
+from reinforcement_api import train, list_env, run
 
 from tools.utils import *
 
@@ -33,9 +37,6 @@ def add_callbacks(app):
         if not n_clicks:
             return {'data': []}, {'data': []}
         
-        if os.path.exists("logs.csv"):
-            os.remove("logs.csv")
-       
         folder = folder_value
 
         if not os.path.isdir(folder):
@@ -62,6 +63,40 @@ def add_callbacks(app):
         fig_cash.update_layout(title_text='Money result', title_x=0.5)
 
         return fig, fig_cash
+    
+
+    @app.callback(
+        Output('reward_prod', 'figure'),
+        Output('money_prod', 'figure'),
+        Output('text_folder_prod', 'style'),
+        Input('submit_button_2_prod', 'n_clicks'),
+        State('Agent_prod', 'value'),
+        State('Stock_prod', 'value'),
+        State('folder_value_prod', 'value'))
+    def call_agent_prod(n_clicks, agent_value, stock_value, folder_value):
+        if not n_clicks:
+            return {'data': []}, {'data': []}, HIDDEN
+        
+        folder = folder_value
+        
+        if not os.path.isdir(folder):
+            return {'data': []}, {'data': []}, WRONG_TEXT
+       
+
+        run(stock_value, agent_value, folder + '/config.yaml', folder + '/logs.csv')
+
+        # logs_prod
+        df = pd.read_csv(folder + "/logs.csv", header=None, names= ['reward', 'done', 'money', 'action'], delimiter=",")
+        fig = px.line(df, y="reward", hover_name="reward")
+        fig.update_layout(title_text='Reward result', title_x=0.5)
+
+        fig_cash = px.line(df, y="money", hover_name="money")
+        fig_cash.update_layout(title_text='Money result', title_x=0.5)
+
+        return fig, fig_cash, HIDDEN
+
+
+
 
     @app.callback(
         Output('submit_button', 'style'),
@@ -82,27 +117,53 @@ def add_callbacks(app):
         elif agent_value == 'random':
             return HIDDEN, True, True, NONE, HIDDEN, NONE, NONE
         return HIDDEN, True, True, NONE, HIDDEN, HIDDEN, NONE
-
+    
 
     @app.callback(
-        [
-            Output('sidebar', 'style'),
-            Output('content', 'style')
-        ],
-        [
-            Input('hide', 'n_clicks'),
-            Input('show', 'n_clicks')
-        ])
+        Output('submit_button_prod', 'style'),
+        Output('Agent_prod', 'disabled'),
+        Output('Stock_prod', 'disabled'),
+        Output('folder_prod', 'style'),
+        Output('submit_button_2_prod', 'style'),
+        Input('submit_button_prod', 'n_clicks'))
+    def show_settings_prod(n_clicks):
+        if not n_clicks:
+            return  NONE, False, False, HIDDEN, HIDDEN
+        return HIDDEN, True, True, NONE, NONE
+    
+
+    @app.callback(
+        Output('sidebar', 'style'),
+        Output('content', 'style'),
+        Input('hide', 'n_clicks'),
+        Input('show', 'n_clicks'))
     def update_style(hide_n, show_n):
         ctx = dash.callback_context
 
         if not ctx.triggered or ctx.triggered[0]['value'] == 0:
-            return [SIDEBAR_STYLE, CONTENT_STYLE]
+            return SIDEBAR_STYLE, CONTENT_STYLE
         else:
             button_id = ctx.triggered[0]['prop_id'].split('.')[0]
             if button_id == 'hide':
-                return [HIDDEN, CONTENT_STYLE_HIDDEN]
-            return [SIDEBAR_STYLE, CONTENT_STYLE]
+                return HIDDEN, CONTENT_STYLE_HIDDEN
+            return SIDEBAR_STYLE, CONTENT_STYLE
+    
+
+    @app.callback(
+        Output('sidebar_prod', 'style'),
+        Output('content_prod', 'style'),
+        Input('hide_prod', 'n_clicks'),
+        Input('show_prod', 'n_clicks'))
+    def update_style_prod(hide_n, show_n):
+        ctx = dash.callback_context
+
+        if not ctx.triggered or ctx.triggered[0]['value'] == 0:
+            return SIDEBAR_STYLE, CONTENT_STYLE
+        else:
+            button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+            if button_id == 'hide_prod':
+                return HIDDEN, CONTENT_STYLE_HIDDEN
+            return SIDEBAR_STYLE, CONTENT_STYLE
 
     @app.callback(
         Output('page-content', 'children'),
@@ -112,6 +173,8 @@ def add_callbacks(app):
             return page_train
         elif pathname == '/product':
             return page_product
+        elif pathname == '/data':
+            return page_data
         else:
             return page_404
     
@@ -123,4 +186,16 @@ def add_callbacks(app):
             return info_dqn
         return info_random
         
-        
+    @app.callback(
+        Output('Data_fig', 'figure'),
+        Input('Data', 'value'))
+    def display_bourse(value):
+        path = "data/" + value + ".csv"
+        df = pd.read_csv(path, delimiter=",")
+        print(df)
+        fig = go.Figure(data=[go.Candlestick(x=df['date'],
+                open=df['opening'],
+                high=df['max'],
+                low=df['min'],
+                close=df['closing'])])
+        return fig

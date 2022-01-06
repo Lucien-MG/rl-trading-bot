@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 #‑∗‑ coding: utf‑8 ‑∗‑
 
+import os
+
 import gym
 import gym_stock_exchange
 
@@ -17,6 +19,10 @@ def list_agent() -> list:
 
 def list_env() -> list:
     return module_loader.list_modules("gym_stock_exchange.envs")
+
+def list_data() -> list:
+    datas = [data.split('.')[0] for data in os.listdir("data/")]
+    return datas
 
 
 def load_agent(agent_name: str):
@@ -40,7 +46,7 @@ def train(env_name: str, agent_name: str, agent_config: str, nb_episode: int, lo
     return
 
 
-def run(env_name: str, agent_name: str, agent_config: str):
+def run(env_name: str, agent_name: str, agent_config: str, log_path: str):
     env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data="data/cac40.csv")
 
     Agent = load_agent(agent_name)
@@ -48,7 +54,7 @@ def run(env_name: str, agent_name: str, agent_config: str):
 
     agent = Agent(config)
 
-    renv = RunEnv(env, agent, render=None)
+    renv = RunEnv(env, agent, log_path=log_path, render=None)
 
     res = renv.episode()
 

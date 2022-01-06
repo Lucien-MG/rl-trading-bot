@@ -22,10 +22,10 @@ def cmd_mod(args):
         pretty_print_list(reinforcement_api.list_env())
     if args.train:
         print("Launch training:")
-        reinforcement_api.train(args.env, args.agent, args.config, args.episode)
+        reinforcement_api.train(args.env, args.agent, args.config, args.episode) # ADD logpath
     elif args.run:
         print("Launch run:")
-        reinforcement_api.run(args.env, args.agent, args.config)
+        reinforcement_api.run(args.env, args.agent, args.config) # ADD logpath
 
 
 if __name__ == '__main__':
