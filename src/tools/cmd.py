@@ -21,8 +21,8 @@ def argument_parser():
     parser.add_argument('-le', '--list-env', action='store_true', default=False,
                     help='If run in cmd mod, list all available environment.')
 
-    parser.add_argument('-e', '--env', type=str, default="relative_stock_exchange_env",
-                    help='If run in cmd mod, choose the environment to use.')
+    parser.add_argument('-e', '--env', type=str, default="stock_exchange_api_env",
+                    help='Select the environment to use.')
 
     parser.add_argument('-a', '--agent', type=str, default="random",
                     help='If run in cmd mod, choose the agent to use.')

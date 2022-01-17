@@ -5,20 +5,20 @@ import os
 import enum
 import random
 
+import numpy as np
+import pandas as pd
+
 import gym
 from gym import error, utils
 from gym.utils import seeding
 
-import numpy as np
-import pandas as pd
-
 class Actions(enum.Enum):
     Skip = 0
     Buy = 1
-    Sell = 2
+    Close = 2
 
 class RelativeSimulationStockExchangeEnv(gym.Env):
-    metadata = {'render.modes': ['human']}
+    metadata = { 'render.modes': ['human'] }
 
     def __init__(self, stock_exchange_data, state_size=10, cash=10000,
                 conv_1d=False, commission_func=lambda x: x * 0.02):

@@ -1,0 +1,54 @@
+################################################################
+##  Reinforcement Learning Trading Environment Configuration  ##
+################################################################
+
+# Bellow is the default configuration used by the environment.
+# Uncomment and edit the wanted sections to use a different configuration.
+
+# The environment that will be use.
+#
+name: "stock_exchange_api_env" 
+
+# Use the simulation engine.
+#
+simulation: True
+
+# Choose which api to use or use local data:
+#
+source: "yahoo"
+
+# Choose which index to use:
+#
+index: "YNDX"
+
+# Input data folder path.
+#
+data_path: "/Users/lulu/Worskpace/rl-trading-bot/data"
+
+# Input data folder path.
+#
+start_date: '2015-01-01'
+end_date: '2015-12-31'
+
+# Data encoding
+#
+data_encoding: 'matrix'
+
+# Render the environment
+#
+render: True
+
+################################################################
+##             Specific Environment Configuration             ##
+################################################################
+
+# hands_on_stock_env
+bars_count: 10
+commission: 0.1
+
+reset_on_close: True
+state_1d: False
+
+random_ofs_on_reset: True
+reward_on_close: False
+volumes: False

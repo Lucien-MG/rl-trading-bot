@@ -2,7 +2,6 @@
 #‑∗‑ coding: utf‑8 ‑∗‑
 
 import gym
-import gym_stock_exchange
 
 import tools.module_loader as module_loader
 import tools.utils as utils
@@ -40,15 +39,18 @@ def train(env_name: str, agent_name: str, agent_config: str, nb_episode: int, lo
     return
 
 
-def run(env_name: str, agent_name: str, agent_config: str):
-    env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data="data/cac40.csv")
+def run(environment_config: dict, agent_name: str, agent_config: dict):
+
+    # Build environment id and create an environement:
+    environment_id = "gym_stock_exchange:" + environment_config.name + "-v0"
+    environment = gym.make(environment_id, config=environment_config)
 
     Agent = load_agent(agent_name)
     config = utils.load_config(agent_config)
 
     agent = Agent(config)
 
-    renv = RunEnv(env, agent, render=None)
+    renv = RunEnv(environment, agent, render=environment_config.render)
 
     res = renv.episode()
 
