@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 #‑∗‑ coding: utf‑8 ‑∗‑
 
+import os
+
 import gym
 
 import tools.module_loader as module_loader
@@ -16,6 +18,10 @@ def list_agent() -> list:
 
 def list_env() -> list:
     return module_loader.list_modules("gym_stock_exchange.envs")
+
+def list_data() -> list:
+    datas = [data.split('.')[0] for data in os.listdir("data/")]
+    return datas
 
 
 def load_agent(agent_name: str):
@@ -54,4 +60,4 @@ def run(environment_config: dict, agent_name: str, agent_config: dict):
 
     res = renv.episode()
 
-    return
+    return res
