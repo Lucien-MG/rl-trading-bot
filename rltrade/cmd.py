@@ -5,6 +5,8 @@ import sys
 import reinforcement_api
 
 from tools.utils import pretty_print_list
+
+from config.agent_config import AgentConfig
 from config.environment_config import EnvironmentConfig
 
 
@@ -24,23 +26,27 @@ def cmd_list_env(args) -> None:
 
 def cmd_train(args) -> None:
     print("Launch training on", args.env)
-    reinforcement_api.train(args.env, args.agent, args.config, args.episode, None)
+
+    # Get a default agent config
+    agent_config = AgentConfig("/Users/lulu/Worskpace/rl-trading-bot/agent_config.yaml")
+
+    # Get a default environement config
+    environment_config = EnvironmentConfig("/Users/lulu/Worskpace/rl-trading-bot/environement_config.yaml")
+
+    reinforcement_api.train(environment_config, agent_config, args.episode, None)
 
 
 def cmd_run(args) -> None:
     print("Launch run on", args.env)
 
-    # Create a default config:
+    # Get a default agent config
+    agent_config = AgentConfig("/Users/lulu/Worskpace/rl-trading-bot/agent_config.yaml")
+
+    # Get a default environement config
     environment_config = EnvironmentConfig("/Users/lulu/Worskpace/rl-trading-bot/environement_config.yaml")
 
-    # Get agent class compatible with gym:
-    agent_class = args.agent
-
-    # Get agent config:
-    agent_config = args.config
-
-    # Launch on run of the encironement:
-    reinforcement_api.run(environment_config, agent_class, agent_config)
+    # Launch on run of the environement:
+    reinforcement_api.run(environment_config, agent_config)
 
 
 def run_cmd(args):

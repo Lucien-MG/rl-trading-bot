@@ -28,36 +28,36 @@ def load_agent(agent_name: str):
     return module_loader.load_module("agents", agent_name).Agent
 
 
-def train(env_name: str, agent_name: str, agent_config: str, nb_episode: int, log_path: str):
-    env = gym.make("gym_stock_exchange:" + env_name + "-v0", stock_exchange_data="data/cac40.csv")
-
-    Agent = load_agent(agent_name)
-    config = utils.load_config(agent_config)
-
-    utils.pretty_print_dic(config, 1)
-
-    agent = Agent(config)
-    print(nb_episode)
-    renv = TrainEnv(env, agent, nb_episode=nb_episode, log_path=log_path, render=None)
-
-    res = renv.train()
-
-    return
-
-
-def run(environment_config: dict, agent_name: str, agent_config: dict):
-
-    # Build environment id and create an environement:
+def train(environment_config: dict, agent_config: str, nb_episode: int, log_path: str):
+    # Build environment id and create an environement
     environment_id = "gym_stock_exchange:" + environment_config.name + "-v0"
     environment = gym.make(environment_id, config=environment_config)
 
-    Agent = load_agent(agent_name)
-    config = utils.load_config(agent_config)
+    # Load and build agent
+    Agent = load_agent(agent_config.name)
+    agent = Agent(agent_config)
 
-    agent = Agent(config)
+    renv = TrainEnv(environment, agent, nb_episode=nb_episode, log_path=log_path, render=None)
 
+    res = renv.train()
+
+    return res
+
+
+def run(environment_config: dict, agent_config: dict):
+
+    # Build environment id and create an environement
+    environment_id = "gym_stock_exchange:" + environment_config.name + "-v0"
+    environment = gym.make(environment_id, config=environment_config)
+
+    # Load and build agent
+    Agent = load_agent(agent_config.name)
+    agent = Agent(agent_config)
+
+    # Build the environment with the agent
     renv = RunEnv(environment, agent, render=environment_config.render)
 
+    # Run the environment with the agent
     res = renv.episode()
 
     return res

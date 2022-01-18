@@ -14,11 +14,18 @@ INDEX: str = "YNDX" # "^FCHI"
 DATA_PATH: str = "~/.rltrade/data" # only needed in case of using local data
 
 # Choose the time that will be use in the environment
-START_DATE: str = "2000-01-01"
-END_DATE: str = "2021-12-31"
+START_DATE: str = "2015-01-01"
+END_DATE: str = "2015-12-31"
+
+# Bars history
+NB_BARS: int = 10
 
 # Data encoding
 DATA_ENCODING: str = "matrix"
+
+# Stock Exchange parameters
+INITIAL_ACCOUNT: float = 100
+COMMISSION: float = 0.1
 
 # Render the environment
 RENDER: bool = False

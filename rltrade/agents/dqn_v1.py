@@ -3,13 +3,15 @@
 
 from .agent_interface import AgentInterface
 
+from random import choices
+from collections import deque
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 
-from random import choices
-from collections import deque
+import torch.utils.tensorboard as tensorboard
 
 class Agent(AgentInterface):
     """ Initialize agent.
@@ -17,14 +19,14 @@ class Agent(AgentInterface):
     Args:
         parameters (dict): contains all the parameters needed
     """
-    def __init__(self, parameters):
-        self._set_parameters(parameters)
+    def __init__(self, config):
+        self._set_parameters(config)
         
         self.action_space= int(self.action_space)
-        self.input_shape = [3, 10]
+        self.input_shape = [6, 10]
 
-        self.primary = DQN(self.input_shape, self.action_space).to(self.device)
-        self.target = DQN(self.input_shape, self.action_space).to(self.device)
+        self.primary = DQNConv1D(self.input_shape, self.action_space).to(self.device)
+        self.target = DQNConv1D(self.input_shape, self.action_space).to(self.device)
         self.optimizer = optim.SGD(self.primary.parameters(), lr=self.alpha)
 
         self.memory = ExperienceReplayBuffer(size=self.memory_size)
@@ -34,8 +36,11 @@ class Agent(AgentInterface):
         self.eval_mode = False
         self.step_count = 0
 
+        if self.tensorboard_log:
+            self.writer = tensorboard.SummaryWriter()
+
     def _set_parameters(self, configuration):
-        self.__dict__ = { k:v for (k,v) in configuration.items() }
+        self.__dict__ = { k:v for (k,v) in configuration.__dict__.items() }
 
     def _reset_target(self):
         """ Update the target network.
@@ -148,10 +153,10 @@ class Agent(AgentInterface):
 
         if done:
             self._update_epsilon()
-            # self.log('Epsilon', self.epsilon)
+            self.log('Epsilon', self.epsilon)
 
             if len(self.memory) >= self.batch_size:
-                # self.log('Reward', sum(self.rewards) / len(self.rewards))
+                self.log('Reward', sum(self.rewards) / len(self.rewards))
                 self.rewards.append(0)
 
         self.step_count += 1
@@ -188,7 +193,7 @@ class Agent(AgentInterface):
         # MSE Error:
         error = torch.mean(torch.pow(states_action_values - target_reward, 2))
 
-        # self.log('Loss', error)
+        self.log('Loss', error)
 
         # Optimize model
         self.optimizer.zero_grad()
@@ -217,19 +222,38 @@ class ExperienceReplayBuffer():
         return states, actions, rewards, next_states, dones
 
 
-class DQN(nn.Module):
+class DQNConv1D(nn.Module):
 
     def __init__(self, input_shape, action_space):
-        super().__init__()
+        super(DQNConv1D, self).__init__()
 
-        self.cv1 = nn.Conv1d(3, 1, 2)
-        self.fc2 = nn.Linear(9, 16)
-        self.fc3 = nn.Linear(16, action_space)
+        self.conv1d = nn.Sequential(
+            nn.Conv1d(input_shape[0], 128, 5),
+            nn.ReLU(),
+            nn.Conv1d(128, 128, 5),
+            nn.ReLU(),
+        )
+
+        out_size = self._get_conv_out(input_shape)
+
+        self.fc_val = nn.Sequential(
+            nn.Linear(out_size, 512),
+            nn.ReLU(),
+            nn.Linear(512, 1),
+        )
+
+        self.fc_adv = nn.Sequential(
+            nn.Linear(out_size, 512),
+            nn.ReLU(),
+            nn.Linear(512, action_space),
+        )
+
+    def _get_conv_out(self, shape):
+        out = self.conv1d(torch.zeros(1, *shape))
+        return int(torch.prod(torch.tensor(out.size())))
 
     def forward(self, x):
-        x = F.relu(self.cv1(x))
-        x = x.squeeze()
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-
-        return x
+        conv1d = self.conv1d(x).view(x.size()[0], -1)
+        val = self.fc_val(conv1d)
+        adv = self.fc_adv(conv1d)
+        return val + (adv - adv.mean(dim=1, keepdim=True))

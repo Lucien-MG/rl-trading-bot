@@ -7,7 +7,7 @@
 
 # The environment that will be use.
 #
-name: "stock_exchange_api_env" 
+name: "stock_exchange_api_env"
 
 # Use the simulation engine.
 #
@@ -36,15 +36,19 @@ data_encoding: 'matrix'
 
 # Render the environment
 #
-render: True
+render: False
+
+# Stock Exchange parameters
+#
+initial_account: 100
+commission: 0.1
 
 ################################################################
 ##             Specific Environment Configuration             ##
 ################################################################
 
-# hands_on_stock_env
-bars_count: 10
-commission: 0.1
+# Bellow is the configuration used by a specific environment.
+# Uncomment and edit the wanted sections to use a different configuration.
 
 reset_on_close: True
 state_1d: False

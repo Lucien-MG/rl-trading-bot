@@ -26,8 +26,15 @@ class EnvironmentConfig:
     start_date: str = START_DATE
     end_date: str = END_DATE
 
+    # Bars history
+    nb_bars: int = NB_BARS
+
     # Data encoding
     data_encoding: str = DATA_ENCODING
+
+    # Stock Exchange parameters
+    initial_account: float = INITIAL_ACCOUNT
+    commission: float = COMMISSION
 
     # Choose the time that will be use in the environment
     render: bool = RENDER
