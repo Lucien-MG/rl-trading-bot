@@ -14,7 +14,7 @@ class EnvironmentConfig:
     environment_config_path: str = ENVIRONMENT_CONFIG_PATH
 
     # Choose the environement to use:
-    name: str = NAME
+    environment_id: str = ENVIRONMENT_ID
     simulation: bool = SIMULATION
 
     # Choose the source where data come from ands the index to use:
@@ -50,15 +50,15 @@ class EnvironmentConfig:
             config_path (Path): The path of the config file.
         """
         # Load config file if there is one:
-        try:
-            if config_path:
+        if config_path:
+            try:
                 with open(config_path, "r") as yaml_file:
                     loaded_config = yaml.safe_load(yaml_file)
                     loaded_config = {} if loaded_config is None else loaded_config
-        except IOError:
-            print("Config: Specified file not found, using default or cli values\n")
-            self.config_path = None
-            loaded_config = {}
+            except IOError:
+                print("Config: Specified file not found, using default or cli values\n")
+                self.config_path = None
+                loaded_config = {}
 
         # Overwrite old arguments and add new ones:
         for key in loaded_config:

@@ -1,16 +1,12 @@
 #!/usr/bin/python3
 #‑∗‑ coding: utf‑8 ‑∗‑
 
-from tools.cmd import argument_parser
+from core.cmd.parser import argument_parser
+from core.cmd.cmd import run_cmd
 
 def interactive_mod(args):
     from app import run_app
     run_app()
-
-
-def cmd_mod(args):
-    from cmd import run_cmd
-    run_cmd(args)
 
 
 def main() -> int:
@@ -21,7 +17,7 @@ def main() -> int:
     if args.interactive:
         interactive_mod(args)
     else:
-        cmd_mod(args)
+        run_cmd(args)
 
     return 0
 

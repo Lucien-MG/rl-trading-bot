@@ -2,14 +2,12 @@
 #‑∗‑ coding: utf‑8 ‑∗‑
 
 import os
-
 import gym
 
-import tools.module_loader as module_loader
-import tools.utils as utils
+import core.utils.module as module_loader
 
-from gymenv.run_env import RunEnv
-from gymenv.train_env import TrainEnv
+from core.genv.run_env import RunEnv
+from core.genv.train_env import TrainEnv
 
 
 def list_agent() -> list:
@@ -17,7 +15,7 @@ def list_agent() -> list:
 
 
 def list_env() -> list:
-    return module_loader.list_modules("gym_stock_exchange.envs")
+    return module_loader.list_modules("stock_exchange_engine.envs")
 
 def list_data() -> list:
     datas = [data.split('.')[0] for data in os.listdir("data/")]
@@ -30,8 +28,7 @@ def load_agent(agent_name: str):
 
 def train(environment_config: dict, agent_config: str, nb_episode: int, log_path: str):
     # Build environment id and create an environement
-    environment_id = "gym_stock_exchange:" + environment_config.name + "-v0"
-    environment = gym.make(environment_id, config=environment_config)
+    environment = gym.make(environment_config.environment_id, config=environment_config)
 
     # Load and build agent
     Agent = load_agent(agent_config.name)
@@ -45,10 +42,8 @@ def train(environment_config: dict, agent_config: str, nb_episode: int, log_path
 
 
 def run(environment_config: dict, agent_config: dict):
-
     # Build environment id and create an environement
-    environment_id = "gym_stock_exchange:" + environment_config.name + "-v0"
-    environment = gym.make(environment_id, config=environment_config)
+    environment = gym.make(environment_config.environment_id, config=environment_config)
 
     # Load and build agent
     Agent = load_agent(agent_config.name)

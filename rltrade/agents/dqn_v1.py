@@ -17,17 +17,24 @@ class Agent(AgentInterface):
     """ Initialize agent.
 
     Args:
-        parameters (dict): contains all the parameters needed
+        config (dict): contains all the parameters needed
     """
     def __init__(self, config):
         self._set_parameters(config)
         
         self.action_space= int(self.action_space)
-        self.input_shape = [6, 10]
+        self.input_shape = [7, 10]
 
         self.primary = DQNConv1D(self.input_shape, self.action_space).to(self.device)
         self.target = DQNConv1D(self.input_shape, self.action_space).to(self.device)
         self.optimizer = optim.SGD(self.primary.parameters(), lr=self.alpha)
+
+        self.primary.apply(self._init_weights)
+        self.target.apply(self._init_weights)
+
+        #clipping_value = 0.5 # arbitrary value of your choosing
+        #torch.nn.utils.clip_grad_norm(self.target.parameters(), clipping_value)
+        #torch.nn.utils.clip_grad_norm(self.primary.parameters(), clipping_value)
 
         self.memory = ExperienceReplayBuffer(size=self.memory_size)
 
@@ -42,6 +49,11 @@ class Agent(AgentInterface):
     def _set_parameters(self, configuration):
         self.__dict__ = { k:v for (k,v) in configuration.__dict__.items() }
 
+    def _init_weights(self, layer):
+        if isinstance(layer, nn.Linear):
+            layer.weight.data.uniform_(-0.0001, 0.0001)
+            layer.bias.data.fill_(0.00001)
+
     def _reset_target(self):
         """ Update the target network.
         """
@@ -52,15 +64,20 @@ class Agent(AgentInterface):
         """
         self.epsilon = max(self.epsilon * self.epsilon_decay_factor, self.min_epsilon)
 
+    @torch.no_grad()
     def _normalize_state(self, state):
-        """ Normalize rewards.
+        """ Normalize state.
         """
+        mu = torch.mean(state, axis=1)
+        sigma = torch.std(state, axis=1)
+        state = torch.transpose((torch.transpose(state, 0, 1) - mu) / (sigma + 1e-10), 0, 1)
         return state
 
+    @torch.no_grad()
     def _normalize_reward(self, reward):
         """ Normalize rewards.
         """
-        return reward
+        return reward / 100
 
     @torch.no_grad()
     def _preprocess_state(self, state):
@@ -114,6 +131,7 @@ class Agent(AgentInterface):
             action (int): an integer compatible with the task's action space.
         """
         state = self._preprocess_state(state)
+        state = self._normalize_state(state)
 
         if not self.eval_mode and torch.rand(1).item() > self.epsilon:
             y_pred = self.primary(state.unsqueeze(dim=0).to(self.device))
@@ -139,6 +157,11 @@ class Agent(AgentInterface):
 
         state = self._preprocess_state(state)
         next_state = self._preprocess_state(next_state)
+
+        state = self._normalize_state(state)
+        next_state = self._normalize_state(next_state)
+
+        reward = self._normalize_reward(reward)
 
         # Push experience to buffer
         self.memory.push(state, action, reward, next_state, done)
@@ -175,7 +198,7 @@ class Agent(AgentInterface):
         dones = torch.tensor(dones).to(self.device)
 
         # Normalize rewards
-        rewards = self._normalize_reward(rewards)
+        # rewards = self._normalize_reward(rewards)
 
         # Calculate target reward and detach it from the graph 
         # Avoid gradient descend in the target network
@@ -185,19 +208,24 @@ class Agent(AgentInterface):
         next_state_value[dones] = 0.0
 
         # Calculate target reward
+        #print("next state value", next_state_value)
         target_reward = rewards + (self.gamma * next_state_value)
 
         # Actual action values state
         states_action_values = self.primary(states).gather(1, actions.unsqueeze(-1)).squeeze(-1)
 
         # MSE Error:
-        error = torch.mean(torch.pow(states_action_values - target_reward, 2))
+        loss = torch.mean(torch.pow(states_action_values - target_reward, 2))
 
-        self.log('Loss', error)
+        # Check that the loss is not nan
+        error_value = loss.detach().item()
+        assert error_value == error_value
+
+        self.log('Loss', loss)
 
         # Optimize model
         self.optimizer.zero_grad()
-        error.backward()
+        loss.backward()
         self.optimizer.step()
 
 
@@ -240,12 +268,14 @@ class DQNConv1D(nn.Module):
             nn.Linear(out_size, 512),
             nn.ReLU(),
             nn.Linear(512, 1),
+            #nn.Sigmoid()
         )
 
         self.fc_adv = nn.Sequential(
             nn.Linear(out_size, 512),
             nn.ReLU(),
             nn.Linear(512, action_space),
+            #nn.Sigmoid()
         )
 
     def _get_conv_out(self, shape):

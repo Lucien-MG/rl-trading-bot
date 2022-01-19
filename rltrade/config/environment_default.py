@@ -5,13 +5,13 @@
 ENVIRONMENT_CONFIG_PATH: str = None
 
 # Choose the environement to use:
-NAME: str = "stock_exchange_api_env" # Choose the environment to use
-SIMULATION: bool = True # Trade with simulation not with a real api
+ENVIRONMENT_ID: str = "stock_exchange_engine:stock_exchange_engine_env-v0"
+SIMULATION: bool = True
 
 # Choose the source where data come from ands the index to use:
-SOURCE: str = "local" # "yahoo"
-INDEX: str = "YNDX" # "^FCHI"
-DATA_PATH: str = "~/.rltrade/data" # only needed in case of using local data
+SOURCE: str = "yahoo"
+INDEX: str = "YNDX"
+DATA_PATH: str = "~/.rltrade/data"
 
 # Choose the time that will be use in the environment
 START_DATE: str = "2015-01-01"

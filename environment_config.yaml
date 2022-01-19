@@ -7,41 +7,41 @@
 
 # The environment that will be use.
 #
-name: "stock_exchange_api_env"
+# environment_id: "stock_exchange_engine:stock_exchange_engine_env-v0"
 
 # Use the simulation engine.
 #
-simulation: True
+# simulation: True
 
 # Choose which api to use or use local data:
 #
-source: "yahoo"
+# source: "yahoo"
 
 # Choose which index to use:
 #
-index: "YNDX"
+# index: "YNDX"
 
 # Input data folder path.
 #
-data_path: "/Users/lulu/Worskpace/rl-trading-bot/data"
+# data_path: ""
 
 # Input data folder path.
 #
-start_date: '2015-01-01'
-end_date: '2015-12-31'
+# start_date: "2015-01-01"
+# end_date: "2015-12-31"
 
 # Data encoding
 #
-data_encoding: 'matrix'
+# data_encoding: "matrix"
 
 # Render the environment
 #
-render: False
+# render: False
 
 # Stock Exchange parameters
 #
-initial_account: 100
-commission: 0.1
+# initial_account: 100
+# commission: 0.05
 
 ################################################################
 ##             Specific Environment Configuration             ##
@@ -50,9 +50,7 @@ commission: 0.1
 # Bellow is the configuration used by a specific environment.
 # Uncomment and edit the wanted sections to use a different configuration.
 
-reset_on_close: True
-state_1d: False
+# reset_on_close: True
 
-random_ofs_on_reset: True
-reward_on_close: False
-volumes: False
+# random_ofs_on_reset: True
+# reward_on_close: False

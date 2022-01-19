@@ -4,7 +4,7 @@
 import argparse
 
 def argument_parser():
-    parser = argparse.ArgumentParser(description='Command line controler for rltrade.')
+    parser = argparse.ArgumentParser(description='Command line interface for rltrade.')
 
     parser.add_argument('-i', '--interactive', action='store_true', default=False,
                     help='Activate the interactive mode in your browser. All other arguments are ignored.')
