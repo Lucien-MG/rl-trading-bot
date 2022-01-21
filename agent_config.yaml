@@ -7,7 +7,7 @@
 
 # Choose the agent to use:
 #
-# name: "dqn_v1"
+# name: "dqn"
 
 # The number of action the agent cas use:
 #
@@ -21,13 +21,12 @@
 # epsilon: 1.0
 # min_epsilon: 0.01
 # epsilon_decay_factor: 0.999
+# epsilon_update_step: 1000
 # memory_size: 100000
 # batch_size: 32
-# update_step: 1000
+# target_update_step: 1000
 # tau: 0.001
 
 # Device use for calculation:
 #
 # device: "cpu"
-
-tensorboard_log: True

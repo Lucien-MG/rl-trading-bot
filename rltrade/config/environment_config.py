@@ -50,15 +50,17 @@ class EnvironmentConfig:
             config_path (Path): The path of the config file.
         """
         # Load config file if there is one:
-        if config_path:
-            try:
-                with open(config_path, "r") as yaml_file:
-                    loaded_config = yaml.safe_load(yaml_file)
-                    loaded_config = {} if loaded_config is None else loaded_config
-            except IOError:
-                print("Config: Specified file not found, using default or cli values\n")
-                self.config_path = None
-                loaded_config = {}
+        if not config_path:
+            return
+
+        try:
+            with open(config_path, "r") as yaml_file:
+                loaded_config = yaml.safe_load(yaml_file)
+                loaded_config = {} if loaded_config is None else loaded_config
+        except IOError:
+            print("Environment config: Specified file not found, using default or cli values")
+            self.config_path = None
+            loaded_config = {}
 
         # Overwrite old arguments and add new ones:
         for key in loaded_config:

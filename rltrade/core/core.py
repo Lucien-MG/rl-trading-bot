@@ -4,18 +4,25 @@
 import os
 import gym
 
-import core.utils.module as module_loader
+from core.utils import module 
 
-from core.genv.run_env import RunEnv
-from core.genv.train_env import TrainEnv
+from core.cmd.cmd import run_cmd
+from core.cmd.parser import argument_parser
 
+from core.genv.run import RunEnvironment
+from core.genv.train import TrainEnvironment
+
+from config.rltrade_config import RLtradeConfig
+from config.agent_config import AgentConfig
+from config.environment_config import EnvironmentConfig
 
 def list_agent() -> list:
-    return module_loader.list_modules("agents")
+    return module.list_modules("agents")
 
 
 def list_env() -> list:
-    return module_loader.list_modules("stock_exchange_engine.envs")
+    return module.list_modules("stock_exchange_engine.envs")
+
 
 def list_data() -> list:
     datas = [data.split('.')[0] for data in os.listdir("data/")]
@@ -23,25 +30,43 @@ def list_data() -> list:
 
 
 def load_agent(agent_name: str):
-    return module_loader.load_module("agents", agent_name).Agent
+    return module.load_module("agents", agent_name).Agent
+
+def load_logger(logger_name: str):
+    return module.load_module("core.log", logger_name).Logger
 
 
-def train(environment_config: dict, agent_config: str, nb_episode: int, log_path: str):
+def train():
+    # Get a default agent config
+    agent_config = AgentConfig(RLTRADE_CONFIG.agent_config_path)
+
+    # Get a default environement config
+    environment_config = EnvironmentConfig(RLTRADE_CONFIG.environment_config_path)
+
     # Build environment id and create an environement
     environment = gym.make(environment_config.environment_id, config=environment_config)
 
     # Load and build agent
-    Agent = load_agent(agent_config.name)
-    agent = Agent(agent_config)
+    agent = load_agent(agent_config.name)(agent_config)
 
-    renv = TrainEnv(environment, agent, nb_episode=nb_episode, log_path=log_path, render=None)
+    # Create a logger instance
+    logger = load_logger(RLTRADE_CONFIG.logger)()
 
-    res = renv.train()
+    # Train the agent with the environment
+    renv = TrainEnvironment(environment, agent, logger=logger, logging_variables=RLTRADE_CONFIG.logging_variables)
+
+    res = renv.train(episodes=RLTRADE_CONFIG.train_episodes)
 
     return res
 
 
-def run(environment_config: dict, agent_config: dict):
+def run():
+    # Get a default agent config
+    agent_config = AgentConfig(RLTRADE_CONFIG.agent_config_path)
+
+    # Get a default environement config
+    environment_config = EnvironmentConfig(RLTRADE_CONFIG.environment_config_path)
+
     # Build environment id and create an environement
     environment = gym.make(environment_config.environment_id, config=environment_config)
 
@@ -49,10 +74,24 @@ def run(environment_config: dict, agent_config: dict):
     Agent = load_agent(agent_config.name)
     agent = Agent(agent_config)
 
-    # Build the environment with the agent
-    renv = RunEnv(environment, agent, render=environment_config.render)
+    # Run the environment with the agent
+    renv = RunEnvironment(environment, agent, render=environment_config.render)
 
     # Run the environment with the agent
     res = renv.episode()
 
     return res
+
+def main():
+    global RLTRADE_CONFIG
+
+    # Parse command line arguments
+    arguments = argument_parser()
+
+    # Load configuration
+    RLTRADE_CONFIG = RLtradeConfig(arguments.config) if arguments.config else RLtradeConfig()
+
+    # Run the command
+    cmd_code = run_cmd(arguments)
+
+    return cmd_code

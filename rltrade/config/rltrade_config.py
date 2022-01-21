@@ -4,38 +4,35 @@
 import yaml
 
 from dataclasses import dataclass
-from config.agent_default import *
+from config.rltrade_default import *
 
 @dataclass
-class AgentConfig:
-    """ Describe the data that we want for the agent. """
+class RLtradeConfig:
+    """ Describe the data that we want for our environment. """
 
-    # Path to the agent config:
+    # Path to the rltrade config:
+    rltrade_config_path: str = RLTRADE_CONFIG_PATH
+
+    # Data folder:
+    rltrade_data_path: str = RLTRADE_DATA_PATH
+
+    # Agent configuration path:
     agent_config_path: str = AGENT_CONFIG_PATH
 
-    # Agent name:
-    name: str = NAME
+    # Agent configuration path:
+    environment_config_path: str = ENVIRONMENT_CONFIG_PATH
 
-    # Define the number of action:
-    action_space: int = ACTION_SPACE
+    # Choose the logger to use:
+    logger: str = LOGGER
 
-    # Agent parameters
-    alpha: float = ALPHA
-    gamma: float = GAMMA
-    epsilon: float = EPSILON
-    min_epsilon: float = MIN_EPSILON
-    epsilon_decay_factor: float = EPSILON_DECAY_FACTOR
-    epsilon_update_step: int = EPSILON_UPDATE_STEP
-    memory_size: int = MEMORY_SIZE
-    batch_size: int = BATCH_SIZE
-    target_update_step: int = TARGET_UPDATE_STEP
-    tau: float = TAU
+    # Variables to log while training
+    logging_variables: dict = LOGGING_VARIABLES
 
-    # Device use for calculation
-    device: str = DEVICE
+    # Number of training episodes
+    train_episodes: int = TRAIN_EPISODES
 
     def __post_init__(self):
-        self.__load_config__(self.agent_config_path)
+        self.__load_config__(self.rltrade_config_path)
 
     def __load_config__(self, config_path):
         """ Load the configuration variables from the cli or the config file.
@@ -47,13 +44,14 @@ class AgentConfig:
         # Load config file if there is one:
         if not config_path:
             return
-
+        
         try:
             with open(config_path, "r") as yaml_file:
                 loaded_config = yaml.safe_load(yaml_file)
+                print(loaded_config)
                 loaded_config = {} if loaded_config is None else loaded_config
         except IOError:
-            print("Agent config: Specified file not found, using default or cli values")
+            print("RLtrade config: Specified file not found, using default or cli values\n")
             self.config_path = None
             loaded_config = {}
 

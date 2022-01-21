@@ -1,17 +1,17 @@
 #!/usr/bin/python3
 #‑∗‑ coding: utf‑8 ‑∗‑
 
-from .agent_interface import AgentInterface
+from agents.agent_interface import AgentInterface
 
-from random import choices
+from agents.dnn.dqn_conv_1d import DQNConv1D
+from agents.buffer.replay_buffer import ExperienceReplayBuffer
+
 from collections import deque
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-
-import torch.utils.tensorboard as tensorboard
 
 class Agent(AgentInterface):
     """ Initialize agent.
@@ -42,9 +42,6 @@ class Agent(AgentInterface):
 
         self.eval_mode = False
         self.step_count = 0
-
-        if self.tensorboard_log:
-            self.writer = tensorboard.SummaryWriter()
 
     def _set_parameters(self, configuration):
         self.__dict__ = { k:v for (k,v) in configuration.__dict__.items() }
@@ -101,15 +98,6 @@ class Agent(AgentInterface):
             path (str): Path where the weights will be saved.
         """
         torch.save(self.primary.state_dict(), path)
-
-    def log(self, name, value):
-        """ Log the value in function of steps.
-        Args:
-            name (str): Variable's name.
-            value (float): Value to store.
-        """
-        if self.tensorboard_log:
-            self.writer.add_scalar(name, value, self.step_count)
 
     def eval(self):
         """ Turn off exploration and learning.
@@ -171,16 +159,11 @@ class Agent(AgentInterface):
         if len(self.memory) >= self.batch_size:
             self.learn()
 
-        if self.step_count % self.update_step == 0:
+        if self.step_count % self.target_update_step == 0:
             self._reset_target()
 
-        if done:
+        if self.step_count % self.epsilon_update_step == 0:
             self._update_epsilon()
-            self.log('Epsilon', self.epsilon)
-
-            if len(self.memory) >= self.batch_size:
-                self.log('Reward', sum(self.rewards) / len(self.rewards))
-                self.rewards.append(0)
 
         self.step_count += 1
 
@@ -221,69 +204,8 @@ class Agent(AgentInterface):
         error_value = loss.detach().item()
         assert error_value == error_value
 
-        self.log('Loss', loss)
-
         # Optimize model
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
 
-
-class ExperienceReplayBuffer():
-    """ Initialize ExperienceReplayBuffer.
-
-    Args:
-        size (int): Replay buffer's size.
-    """
-    def __init__(self, size=100):
-        self.buffer = deque(maxlen=size)
-
-    def __len__(self):
-        return len(self.buffer)
-
-    def push(self, state, action, reward, next_state, done):
-        self.buffer.append((state, action, reward, next_state, done))
-
-    def batch(self, batch_size=32):
-        steps = choices(self.buffer, k=batch_size)
-        states, actions, rewards, next_states, dones = zip(*steps)
-        return states, actions, rewards, next_states, dones
-
-
-class DQNConv1D(nn.Module):
-
-    def __init__(self, input_shape, action_space):
-        super(DQNConv1D, self).__init__()
-
-        self.conv1d = nn.Sequential(
-            nn.Conv1d(input_shape[0], 128, 5),
-            nn.ReLU(),
-            nn.Conv1d(128, 128, 5),
-            nn.ReLU(),
-        )
-
-        out_size = self._get_conv_out(input_shape)
-
-        self.fc_val = nn.Sequential(
-            nn.Linear(out_size, 512),
-            nn.ReLU(),
-            nn.Linear(512, 1),
-            #nn.Sigmoid()
-        )
-
-        self.fc_adv = nn.Sequential(
-            nn.Linear(out_size, 512),
-            nn.ReLU(),
-            nn.Linear(512, action_space),
-            #nn.Sigmoid()
-        )
-
-    def _get_conv_out(self, shape):
-        out = self.conv1d(torch.zeros(1, *shape))
-        return int(torch.prod(torch.tensor(out.size())))
-
-    def forward(self, x):
-        conv1d = self.conv1d(x).view(x.size()[0], -1)
-        val = self.fc_val(conv1d)
-        adv = self.fc_adv(conv1d)
-        return val + (adv - adv.mean(dim=1, keepdim=True))
