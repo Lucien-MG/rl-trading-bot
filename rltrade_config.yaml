@@ -21,6 +21,7 @@
 logging_variables:
   agent:
     - epsilon
+    - loss
 
 # Number of training episodes
-# train_episodes: int = 1000
+# train_episodes: 1000

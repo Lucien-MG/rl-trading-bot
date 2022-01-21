@@ -42,6 +42,7 @@ class Agent(AgentInterface):
 
         self.eval_mode = False
         self.step_count = 0
+        self.loss = 0
 
     def _set_parameters(self, configuration):
         self.__dict__ = { k:v for (k,v) in configuration.__dict__.items() }
@@ -201,8 +202,8 @@ class Agent(AgentInterface):
         loss = torch.mean(torch.pow(states_action_values - target_reward, 2))
 
         # Check that the loss is not nan
-        error_value = loss.detach().item()
-        assert error_value == error_value
+        self.loss = loss.detach().item()
+        assert self.loss == self.loss
 
         # Optimize model
         self.optimizer.zero_grad()
