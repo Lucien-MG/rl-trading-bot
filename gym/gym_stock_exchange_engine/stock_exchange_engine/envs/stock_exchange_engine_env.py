@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 
 from .actions.actions import Actions
 from .states.stock_exchange_state import StockExchangeState
+from .states.stock_exchange_state_intraday import StockExchangeStateIntraday
 from .data_manager.stock_exchange_data_manager import StockExchangeDataManager
 
 class StockExchangeEngineEnv(gym.Env):
@@ -24,7 +25,7 @@ class StockExchangeEngineEnv(gym.Env):
         self.data = self.data.set_index('Date')
 
         # Create a state:
-        self.state = StockExchangeState(self.data, self.config)
+        self.state = StockExchangeStateIntraday(self.data, self.config)
 
         # Build gym env
         self.action_space = gym.spaces.Discrete(n=len(Actions))
@@ -46,7 +47,7 @@ class StockExchangeEngineEnv(gym.Env):
         self.data['Low'].plot(label='Stock Prices On A Low', figsize=(16,5))
 
         plt.title(self.config.index + ' stock values')
-        plt.xlabel('Time')
+        plt.xlabel('Date')
         plt.ylabel('Stock Values')
         plt.legend()
 

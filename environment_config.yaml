@@ -15,11 +15,11 @@
 
 # Choose which api to use or use local data:
 #
-# source: "yahoo"
+source: "local"
 
 # Choose which index to use:
 #
-# index: "YNDX"
+index: "AAPL"
 
 # Input data folder path.
 #
@@ -27,8 +27,8 @@
 
 # Input data folder path.
 #
-# start_date: "2015-01-01"
-# end_date: "2015-12-31"
+start_date: "2019-01-01"
+end_date: "2020-01-01"
 
 # Data encoding
 #
@@ -40,7 +40,7 @@
 
 # Stock Exchange parameters
 #
-# initial_account: 100
+initial_account: 1000
 # commission: 0.05
 
 ################################################################

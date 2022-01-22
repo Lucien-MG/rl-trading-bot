@@ -16,7 +16,6 @@ class StockExchangeDataManager:
         # Constants
         self.INDEX = []
         self.HEADERS = ["Date", "High", "Low", "Open", "Close", "Volume", "Adj Close"]
-        self.AVERAGE_TRADING_DAY = 0.68
         self.MASK = lambda df : (df["Date"] > pd.to_datetime(self._start_time)) & \
                                 (df["Date"] <= pd.to_datetime(self._end_time))
 
@@ -41,6 +40,7 @@ class StockExchangeDataManager:
     def __load_content__(self):
         try:
             self._data = pd.read_csv(self._file_path)
+            print(self._data)
             self._data["Date"] = pd.to_datetime(self._data["Date"])
             self._data.sort_values(by="Date")
         except (FileNotFoundError, pd.errors.EmptyDataError) as e:
@@ -48,9 +48,9 @@ class StockExchangeDataManager:
             self._data = pd.DataFrame(index=self.INDEX, columns=self.HEADERS)
 
     def __is_content_available__(self):
-        delta_time = self._end_time - self._start_time
+        # delta_time = self._end_time - self._start_time
         delta_count = self._data.loc[self.MASK]["Date"].count()
-        self._data_available = delta_count / delta_time.days >= self.AVERAGE_TRADING_DAY
+        self._data_available = delta_count > 0
 
     def __download_content__(self):
         self._data_downloaded = pddr.data.DataReader(self._index, self._source, self._start_time, self._end_time)
