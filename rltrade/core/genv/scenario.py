@@ -58,9 +58,9 @@ class ScenarioEnvironment:
 
             self.step += len(episode_rewards)
 
-            episode_mean_reward = self.__mean__(episode_rewards)
+            episode_sum_reward = sum(episode_rewards)
 
-            self.rewards.append(episode_mean_reward)
+            self.rewards.append(episode_sum_reward)
 
             self.__log__()
 
