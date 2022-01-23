@@ -4,11 +4,14 @@
 import yaml
 
 from dataclasses import dataclass
-from config.rltrade_default import *
+from core.config.rltrade_default import *
 
 @dataclass
 class RLtradeConfig:
     """ Describe the data that we want for our environment. """
+
+    # # The root of the framework
+    framework_root: str = FRAMEWORK_ROOT
 
     # Path to the rltrade config:
     rltrade_config_path: str = RLTRADE_CONFIG_PATH
@@ -48,7 +51,6 @@ class RLtradeConfig:
         try:
             with open(config_path, "r") as yaml_file:
                 loaded_config = yaml.safe_load(yaml_file)
-                print(loaded_config)
                 loaded_config = {} if loaded_config is None else loaded_config
         except IOError:
             print("RLtrade config: Specified file not found, using default or cli values\n")
@@ -58,3 +60,14 @@ class RLtradeConfig:
         # Overwrite old arguments and add new ones:
         for key in loaded_config:
             setattr(self, key, loaded_config[key])
+
+    def infos(self):
+        return (
+            f"Root path: {self.framework_root}\n"
+            f"Config path: {self.rltrade_config_path}\n"
+            f"Data folder path: {self.rltrade_data_path}\n"
+            f"Looger: {self.logger}\n"
+            f"Agent config path: {self.agent_config_path}\n"
+            f"Environment config path: {self.environment_config_path}"
+        )
+

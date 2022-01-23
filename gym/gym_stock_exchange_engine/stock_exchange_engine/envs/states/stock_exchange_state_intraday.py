@@ -35,6 +35,9 @@ class StockExchangeStateIntraday(StockExchangeStateInterface):
         self.next_day = self.day + datetime.timedelta(days=1)
         self.data_day = self.data[(self.data.index >= pd.to_datetime(self.day)) & (self.data.index < pd.to_datetime(self.next_day))]
 
+        if len(self.data_day) <= self.config.nb_bars:
+            raise Exception("Not enough data available. Be sure that your data contain intraday ticks.")
+
         self.offset = self.config.nb_bars
         self.account = self.config.initial_account
         self.stock = 0

@@ -2,6 +2,7 @@
 # ‑∗‑ coding: utf‑8 ‑∗‑
 
 import gym
+import random
 from tqdm import tqdm
 from collections import deque
 
@@ -19,7 +20,7 @@ class TrainEnvironment:
         agent: agent that will interact with the environment.
     """
     def __init__(self, env, agent, solved=None, logger=None, logging_variables=None):
-        self.env = env
+        self.envs = env
         self.agent = agent
         self.solved = solved
 
@@ -30,9 +31,8 @@ class TrainEnvironment:
 
         self.rewards = deque(maxlen=100)
 
-        assert isinstance(self.env, gym.Env)
+        assert isinstance(self.envs, list)
         assert isinstance(self.agent, AgentInterface)
-        assert isinstance(self.solved, int)
         assert isinstance(self.logger, LogInterface)
 
     def __mean__(self, list):
@@ -47,18 +47,20 @@ class TrainEnvironment:
                     self.logger.log(attributes, self.__dict__[element].__dict__[attributes], self.step)
 
     def train(self, episodes=100):
-        environment_runner = RunEnvironment(self.env, self.agent, render=False)
+        environment_runners = [RunEnvironment(env, self.agent, render=False) for env in self.envs]
 
         self.logger.start()
 
         for _ in tqdm(range(episodes)):
+            environment_runner = random.choice(environment_runners)
+
             episode_rewards = environment_runner.episode()
 
             self.step += len(episode_rewards)
 
-            episode_mean_reward = self.__mean__(episode_rewards)
+            episode_reward_indicator = sum(episode_rewards)
 
-            self.rewards.append(episode_mean_reward)
+            self.rewards.append(episode_reward_indicator)
 
             self.__log__()
 

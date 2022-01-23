@@ -157,7 +157,7 @@ class Agent(AgentInterface):
 
         self.rewards[-1] += reward
 
-        if len(self.memory) >= self.batch_size:
+        if len(self.memory) >= self.batch_size * 10 and self.step_count % self.network_update_step == 0:
             self.learn()
 
         if self.step_count % self.target_update_step == 0:

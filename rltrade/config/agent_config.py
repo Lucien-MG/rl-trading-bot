@@ -28,6 +28,7 @@ class AgentConfig:
     epsilon_update_step: int = EPSILON_UPDATE_STEP
     memory_size: int = MEMORY_SIZE
     batch_size: int = BATCH_SIZE
+    network_update_step: int = NETWORK_UPDATE_STEP
     target_update_step: int = TARGET_UPDATE_STEP
     tau: float = TAU
 

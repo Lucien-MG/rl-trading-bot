@@ -22,10 +22,10 @@ GAMMA: float = 0.99
 EPSILON: float = 1.0
 
 # Minimal value for epsilon
-MIN_EPSILON: float = 0.01
+MIN_EPSILON: float = 0.001
 
 # Epsilon decay factor
-EPSILON_DECAY_FACTOR: float = 0.999
+EPSILON_DECAY_FACTOR: float = 0.9995
 
 # Epsilon update step
 EPSILON_UPDATE_STEP: int = 1000
@@ -35,6 +35,9 @@ MEMORY_SIZE: int = 100000
 
 # Batch size
 BATCH_SIZE: int = 32
+
+# Network update step
+NETWORK_UPDATE_STEP: int = 2
 
 # Double target network
 TARGET_UPDATE_STEP: int = 1000
