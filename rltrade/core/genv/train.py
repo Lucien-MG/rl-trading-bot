@@ -5,6 +5,7 @@ import gym
 from tqdm import tqdm
 from collections import deque
 
+from agents.agent_interface import AgentInterface
 from core.genv.run import RunEnvironment
 from core.log.log_interface import LogInterface
 
@@ -30,6 +31,8 @@ class TrainEnvironment:
         self.rewards = deque(maxlen=100)
 
         assert isinstance(self.env, gym.Env)
+        assert isinstance(self.agent, AgentInterface)
+        assert isinstance(self.solved, int)
         assert isinstance(self.logger, LogInterface)
 
     def __mean__(self, list):
@@ -40,7 +43,8 @@ class TrainEnvironment:
 
         for element in self.logging_variables:
             for attributes in self.logging_variables[element]:
-                self.logger.log(attributes, self.__dict__[element].__dict__[attributes], self.step)
+                if attributes in self.__dict__[element].__dict__:
+                    self.logger.log(attributes, self.__dict__[element].__dict__[attributes], self.step)
 
     def train(self, episodes=100):
         environment_runner = RunEnvironment(self.env, self.agent, render=False)

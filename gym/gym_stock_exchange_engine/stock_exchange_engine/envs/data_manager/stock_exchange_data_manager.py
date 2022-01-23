@@ -40,7 +40,6 @@ class StockExchangeDataManager:
     def __load_content__(self):
         try:
             self._data = pd.read_csv(self._file_path)
-            print(self._data)
             self._data["Date"] = pd.to_datetime(self._data["Date"])
             self._data.sort_values(by="Date")
         except (FileNotFoundError, pd.errors.EmptyDataError) as e:

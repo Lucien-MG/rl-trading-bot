@@ -4,13 +4,14 @@
 import os
 import gym
 
-from core.utils import module 
+from core.utils import module
 
 from core.cmd.cmd import run_cmd
 from core.cmd.parser import argument_parser
 
 from core.genv.run import RunEnvironment
 from core.genv.train import TrainEnvironment
+from core.genv.scenario import ScenarioEnvironment
 
 from config.rltrade_config import RLtradeConfig
 from config.agent_config import AgentConfig
@@ -32,6 +33,7 @@ def list_data() -> list:
 def load_agent(agent_name: str):
     return module.load_module("agents", agent_name).Agent
 
+
 def load_logger(logger_name: str):
     return module.load_module("core.log", logger_name).Logger
 
@@ -41,10 +43,14 @@ def train():
     agent_config = AgentConfig(RLTRADE_CONFIG.agent_config_path)
 
     # Get a default environement config
-    environment_config = EnvironmentConfig(RLTRADE_CONFIG.environment_config_path)
-
-    # Build environment id and create an environement
-    environment = gym.make(environment_config.environment_id, config=environment_config)
+    if os.path.isdir(RLTRADE_CONFIG.environment_config_path):
+        environment_config = [EnvironmentConfig(os.path.join(RLTRADE_CONFIG.environment_config_path, config_path)) for config_path in os.listdir(RLTRADE_CONFIG.environment_config_path)]
+        # Build environment id and create an environement
+        environment = [gym.make(env_config.environment_id, config=env_config) for env_config in environment_config]
+    else:
+        environment_config = EnvironmentConfig(RLTRADE_CONFIG.environment_config_path)
+        # Build environment id and create an environement
+        environment = gym.make(environment_config.environment_id, config=environment_config)
 
     # Load and build agent
     agent = load_agent(agent_config.name)(agent_config)
@@ -53,7 +59,10 @@ def train():
     logger = load_logger(RLTRADE_CONFIG.logger)()
 
     # Train the agent with the environment
-    renv = TrainEnvironment(environment, agent, logger=logger, logging_variables=RLTRADE_CONFIG.logging_variables)
+    if os.path.isdir(RLTRADE_CONFIG.environment_config_path):
+        renv = ScenarioEnvironment(environment, agent, logger=logger, logging_variables=RLTRADE_CONFIG.logging_variables)
+    else:
+        renv = TrainEnvironment(environment, agent, logger=logger, logging_variables=RLTRADE_CONFIG.logging_variables)
 
     res = renv.train(episodes=RLTRADE_CONFIG.train_episodes)
 
@@ -71,8 +80,7 @@ def run():
     environment = gym.make(environment_config.environment_id, config=environment_config)
 
     # Load and build agent
-    Agent = load_agent(agent_config.name)
-    agent = Agent(agent_config)
+    agent = load_agent(agent_config.name)(agent_config)
 
     # Run the environment with the agent
     renv = RunEnvironment(environment, agent, render=environment_config.render)
