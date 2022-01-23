@@ -67,8 +67,8 @@ class StockExchangeStateIntraday(StockExchangeStateInterface):
 
         # Nest step state
         observation = self.encode()
-        reward += ((self.account - self.config.initial_account) * 100) / self.config.initial_account
         done |= self.offset >= len(self.data_day)
+        reward += ((self.account - self.config.initial_account) * 100) / self.config.initial_account if done else 0
         info = {}
 
         return observation, reward, done, info
