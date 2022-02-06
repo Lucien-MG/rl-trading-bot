@@ -1,0 +1,30 @@
+################################################################
+##     Reinforcement Learning Trading Soft Configuration      ##
+################################################################
+
+# Data folder:
+#
+# rltrade_data_path: ""
+
+# Agent configuration path:
+#
+# agent_config_path: "config/agents/agent_config.yaml"
+
+# Agent configuration path:
+#
+# environment_config_path: "config/environments"
+
+# Choose the logger to use:
+#
+# logger: "tensorboard_logger"
+
+# Variables to log while training
+#
+logging_variables:
+  agent:
+    - epsilon
+    - loss
+
+# Number of training episodes
+#
+train_episodes: 3500

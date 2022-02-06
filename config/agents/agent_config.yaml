@@ -1,0 +1,32 @@
+################################################################
+##     Reinforcement Learning Trading Agent Configuration     ##
+################################################################
+
+# Bellow is the default configuration used by the environment.
+# Uncomment and edit the wanted sections to use a different configuration.
+
+# Choose the agent to use:
+#
+name: "dqn"
+
+# The number of action the agent cas use:
+#
+# action_space: 3
+
+
+# Agent parameters:
+#
+# alpha: 0.00001
+# gamma: 0.99
+# epsilon: 1.0
+# min_epsilon: 0.01
+# epsilon_decay_factor: 0.999
+# epsilon_update_step: 200
+# memory_size: 100000
+# batch_size: 32
+# target_update_step: 1000
+# tau: 0.001
+
+# Device use for calculation:
+#
+# device: "cpu"
