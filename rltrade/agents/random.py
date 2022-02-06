@@ -11,7 +11,7 @@ class Agent(AgentInterface):
         self._set_config(config)
 
     def _set_config(self, configuration):
-        self.__dict__ = { k:v for (k,v) in configuration.items() }
+        self.__dict__ = { k:v for (k,v) in configuration.__dict__.items() }
     
     def action(self, state):
         return random.randint(0, int(self.action_space) - 1)

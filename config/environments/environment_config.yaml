@@ -15,11 +15,11 @@
 
 # Choose which api to use or use local data:
 #
-source: "local"
+source: "yahoo"
 
 # Choose which index to use:
 #
-index: "AAPL"
+index: "MSFT"
 
 # Input data folder path.
 #
@@ -27,8 +27,8 @@ index: "AAPL"
 
 # Input data folder path.
 #
-start_date: "2019-01-01"
-end_date: "2020-01-01"
+start_date: "2022-01-07"
+end_date: "2022-02-06"
 
 # Data encoding
 #

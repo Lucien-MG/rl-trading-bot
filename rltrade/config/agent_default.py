@@ -13,7 +13,7 @@ ACTION_SPACE: int = 3
 # Agent parameters
 
 # Alpha, equivalent of learning rate
-ALPHA: float = 0.000001
+ALPHA: float = 0.00001
 
 # Propagation rate of the reward
 GAMMA: float = 0.99
@@ -22,16 +22,16 @@ GAMMA: float = 0.99
 EPSILON: float = 1.0
 
 # Minimal value for epsilon
-MIN_EPSILON: float = 0.001
+MIN_EPSILON: float = 0.01
 
 # Epsilon decay factor
 EPSILON_DECAY_FACTOR: float = 0.9995
 
 # Epsilon update step
-EPSILON_UPDATE_STEP: int = 1000
+EPSILON_UPDATE_STEP: int = 250
 
 # Number of steps keep in memory
-MEMORY_SIZE: int = 100000
+MEMORY_SIZE: int = 150000
 
 # Batch size
 BATCH_SIZE: int = 32

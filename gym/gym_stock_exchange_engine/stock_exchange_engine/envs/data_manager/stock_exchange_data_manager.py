@@ -2,95 +2,117 @@
 #‑∗‑ coding: utf‑8 ‑∗‑
 
 import pathlib
+import importlib
 import pandas as pd
-import pandas_datareader as pddr
+
+from pkgutil import iter_modules
+import stock_exchange_engine.envs.data_manager.sources as sources
 
 class StockExchangeDataManager:
+    LOCAL = "local"
+    HEADERS = ["date", "high", "low", "open", "close", "volume", "adj close"]
+
+    SOURCES = {module_finder.name: module_finder for module_finder in iter_modules(sources.__path__)}
 
     def __init__(self, data_dir_path):
-        # Create the main directory
+        # Local must exits for the data manager to work
+        assert self.LOCAL in self.SOURCES.keys()
+
+        # Get the path for data folder
         self.data_dir_path = pathlib.Path(data_dir_path)
         self.data_dir_path = self.data_dir_path.expanduser()
+
+        # Create the main directory if it does not exist
         self.data_dir_path.mkdir(parents=True, exist_ok=True)
 
-        # Constants
-        self.INDEX = []
-        self.HEADERS = ["Date", "High", "Low", "Open", "Close", "Volume", "Adj Close"]
-        self.MASK = lambda df : (df["Date"] > pd.to_datetime(self._start_time)) & \
-                                (df["Date"] <= pd.to_datetime(self._end_time))
+    def _import_module(self, module_name, file_path):
+        spec = importlib.util.spec_from_file_location(module_name, file_path / (module_name + ".py"))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
 
-        # Intern variables
-        self._index = None
-        self._source = None
-        self._start_time = None
-        self._end_time = None
+    def _mask(self, start_time, end_time):
+        return lambda df: \
+            (df["date"] > pd.to_datetime(start_time)) & \
+            (df["date"] <= pd.to_datetime(end_time))
 
-        self._file_name = None
-        self._file_path = None
+    def _save_content(self, content, file_path):
+        content.to_csv(file_path, index=False)
 
-        self._data = None
-        self._data_selected = None
-        self._data_downloaded = None
-        self._data_available = False
-
-    def __file_infos_update__(self):
-        self._file_name = self._index + ".csv"
-        self._file_path = self.data_dir_path / self._file_name
-
-    def __load_content__(self):
+    def _load_content(self, file_path):
         try:
-            self._data = pd.read_csv(self._file_path)
-            self._data["Date"] = pd.to_datetime(self._data["Date"])
-            self._data.sort_values(by="Date")
-        except (FileNotFoundError, pd.errors.EmptyDataError) as e:
-            self._data_available = False
-            self._data = pd.DataFrame(index=self.INDEX, columns=self.HEADERS)
+            data = pd.read_csv(file_path)
+        except (FileNotFoundError, pd.errors.EmptyDataError) as EmptyData:
+            print("No file or data found. Creating empty frame.")
+            data = pd.DataFrame(columns=self.HEADERS)
 
-    def __is_content_available__(self):
-        # delta_time = self._end_time - self._start_time
-        delta_count = self._data.loc[self.MASK]["Date"].count()
-        self._data_available = delta_count > 0
+        data.columns = data.columns.str.lower()
+        data.columns = data.columns.str.replace('[#,@,&,<,>]', '', regex=True)
 
-    def __download_content__(self):
-        self._data_downloaded = pddr.data.DataReader(self._index, self._source, self._start_time, self._end_time)
+        data["date"] = pd.to_datetime(data["date"], format='%Y-%m-%d')
 
-        self._data_downloaded = self._data_downloaded.reset_index()
-        self._data_downloaded["Date"] = pd.to_datetime(self._data_downloaded["Date"])
+        if 'time' in data.columns:
+            data["time"] = pd.to_datetime(data["time"], format='%H%M%S')
+            data['date'] = pd.to_datetime(data["date"].dt.date.astype(str) + ' ' + data["time"].dt.time.astype(str))
+            data = data.drop(['time'], axis=1)
 
-    def __merge_content__(self):
-        new_data = self._data_downloaded[self._data_downloaded["Date"].isin(self._data["Date"]) == False]
-        self._data = pd.concat([self._data, new_data], ignore_index=True)
-        self._data.sort_values(by="Date")
+        data = data.rename(columns={"vol": "volume"})
+        data.sort_values(by="date")
 
-    def __save_content__(self):
-        self._data.to_csv(self._file_path, index=False)
+        return data
 
-    def __select_content__(self):
-        self._data_selected = self._data.loc[self.MASK]
+    def _is_content_available(self, content, start_date, end_date):
+        delta_count = content.loc[self._mask(start_date, end_date)]["date"].count()
+        return delta_count > 0
+
+    def _download_content(self, index, source, start_time, end_time):
+        module_path = pathlib.Path(self.SOURCES[source].module_finder.path)
+        source_module = self._import_module(source, module_path)
+        source_class = source_module.SourceClass(index, start_time, end_time)
+
+        data_downloaded = source_class.load()
+        data_downloaded.columns = data_downloaded.columns.str.replace('[#,@,&,<,>]', '', regex=True)
+
+        return data_downloaded
+
+    def _missing_content(self, original_content, download_content):
+        return download_content[download_content["date"].isin(original_content["date"]) == False]
+
+    def _merge_content(self, original_content, missing_content):
+        content = pd.concat([original_content, missing_content], ignore_index=True)
+        content.sort_values(by="date")
+
+        return content
+
+    def _select_content(self, content, start_date, end_date):
+        return content.loc[self._mask(start_date, end_date)]
 
     def get_index(self, index, source, start_date, end_date):
-        self._index = index
-        self._source = source
-        self._start_time = pd.to_datetime(start_date).date()
-        self._end_time = pd.to_datetime(end_date).date()
+        if source not in self.SOURCES.keys():
+            raise ValueError('Source: ' + source + ' does not exist. Available sources are:', self.SOURCES_NAME)
 
-        # Init all our information
-        self.__file_infos_update__()
+        start_time = pd.to_datetime(start_date).date()
+        end_time = pd.to_datetime(end_date).date()
+
+        file_name = index + ".csv"
+        file_path = self.data_dir_path / file_name
 
         # Load the data that the manager can
-        self.__load_content__()
-
-        # Check the data availability:
-        self.__is_content_available__()
+        content = self._load_content(file_path)
 
         # Check and download content if necessary
-        if not self._data_available:
-            print("Download")
-            self.__download_content__()
-            self.__merge_content__()
-            self.__save_content__()
-            self.__load_content__()
+        if source != self.LOCAL:
+            print("\nDownload data:")
+            downloaded_content = self._download_content(index, source, start_time, end_time)
+            missing_content = self._missing_content(content, downloaded_content)
+            content = self._merge_content(content, missing_content)
+            self._save_content(content, file_path)
+            content = self._load_content(file_path)
 
-        self.__select_content__()
+        # Get the exact content asked
+        content = self._select_content(content, start_date, end_time)
 
-        return self._data_selected
+        # Set index
+        content.set_index('date')
+
+        return content

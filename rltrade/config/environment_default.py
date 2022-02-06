@@ -24,7 +24,7 @@ NB_BARS: int = 10
 DATA_ENCODING: str = "matrix"
 
 # Stock Exchange parameters
-INITIAL_ACCOUNT: float = 100
+INITIAL_ACCOUNT: float = 1000
 COMMISSION: float = 0.1
 
 # Render the environment
