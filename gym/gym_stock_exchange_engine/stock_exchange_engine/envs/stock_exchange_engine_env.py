@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from .actions.actions import Actions
+from stock_exchange_engine.envs.states.simple_state import SimpleStockExchangeState
 from .states.stock_exchange_state import StockExchangeState
 from .states.stock_exchange_state_intraday import StockExchangeStateIntraday
 from .data_manager.stock_exchange_data_manager import StockExchangeDataManager
@@ -22,14 +23,13 @@ class StockExchangeEngineEnv(gym.Env):
         # Request Data
         self.data_manager = StockExchangeDataManager(config.data_path)
         self.data = self.data_manager.get_index(self.config.index, self.config.source, self.config.start_date, self.config.end_date)
-        self.data = self.data.set_index('Date')
 
         # Create a state:
-        self.state = StockExchangeStateIntraday(self.data, self.config)
+        self.state = SimpleStockExchangeState(self.data, self.config)
 
         # Build gym env
         self.action_space = gym.spaces.Discrete(n=len(Actions))
-        self.observation_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=[7, 10], dtype=np.float32)
+        self.observation_space = gym.spaces.Box(low=-np.inf, high=np.inf, shape=[7, 32], dtype=np.float32)
 
     def reset(self):
         observation = self.state.reset()

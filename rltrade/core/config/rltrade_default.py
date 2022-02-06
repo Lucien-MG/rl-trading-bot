@@ -10,6 +10,9 @@ RLTRADE_CONFIG_PATH: str = FRAMEWORK_ROOT / "config/rltrade_config.yaml"
 # Data folder:
 RLTRADE_DATA_PATH: str = Path().home() / ".rltrade"
 
+# Mode:
+COMMAND: str = "train"
+
 # Agent configuration path:
 AGENT_CONFIG_PATH: str = FRAMEWORK_ROOT / "config/agents/agent_config.yaml"
 

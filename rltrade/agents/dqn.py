@@ -3,7 +3,7 @@
 
 from agents.agent_interface import AgentInterface
 
-from agents.dnn.dqn_conv_1d import DQNConv1D
+from agents.dnn.dqn_linear import SimpleFFDQN
 from agents.buffer.replay_buffer import ExperienceReplayBuffer
 
 from collections import deque
@@ -23,18 +23,14 @@ class Agent(AgentInterface):
         self._set_parameters(config)
         
         self.action_space= int(self.action_space)
-        self.input_shape = [7, 10]
+        self.input_shape = (1, 41)
 
-        self.primary = DQNConv1D(self.input_shape, self.action_space).to(self.device)
-        self.target = DQNConv1D(self.input_shape, self.action_space).to(self.device)
+        self.primary = SimpleFFDQN(self.input_shape, self.action_space).to(self.device)
+        self.target = SimpleFFDQN(self.input_shape, self.action_space).to(self.device)
         self.optimizer = optim.SGD(self.primary.parameters(), lr=self.alpha)
 
         self.primary.apply(self._init_weights)
         self.target.apply(self._init_weights)
-
-        #clipping_value = 0.5 # arbitrary value of your choosing
-        #torch.nn.utils.clip_grad_norm(self.target.parameters(), clipping_value)
-        #torch.nn.utils.clip_grad_norm(self.primary.parameters(), clipping_value)
 
         self.memory = ExperienceReplayBuffer(size=self.memory_size)
 
@@ -49,8 +45,8 @@ class Agent(AgentInterface):
 
     def _init_weights(self, layer):
         if isinstance(layer, nn.Linear):
-            layer.weight.data.uniform_(-0.0001, 0.0001)
-            layer.bias.data.fill_(0.00001)
+            layer.weight.data.uniform_(-0.001, 0.001)
+            layer.bias.data.fill_(0.001)
 
     def _reset_target(self):
         """ Update the target network.
@@ -66,22 +62,27 @@ class Agent(AgentInterface):
     def _normalize_state(self, state):
         """ Normalize state.
         """
-        mu = torch.mean(state, axis=1)
-        sigma = torch.std(state, axis=1)
-        state = torch.transpose((torch.transpose(state, 0, 1) - mu) / (sigma + 1e-10), 0, 1)
+        # Stock = Close - Stock
+        #state[-4] = (state[-4] - state[-3])
+
+        #mu = torch.mean(state, axis=1)
+        #sigma = torch.std(state, axis=1)
+        #state_normalized = torch.transpose((torch.transpose(state, 0, 1) - mu) / (sigma + 1e-10), 0, 1)
+
         return state
 
     @torch.no_grad()
     def _normalize_reward(self, reward):
         """ Normalize rewards.
         """
-        return reward / 100
+        return reward
 
     @torch.no_grad()
     def _preprocess_state(self, state):
         """ Apply preprocessing on state.
         """
         state_torch = torch.from_numpy(state)
+        # state_torch = torch.unsqueeze(state_torch, axis=-1)
 
         return state_torch.float()
 
@@ -157,7 +158,7 @@ class Agent(AgentInterface):
 
         self.rewards[-1] += reward
 
-        if len(self.memory) >= self.batch_size * 10 and self.step_count % self.network_update_step == 0:
+        if len(self.memory) >= self.memory_size * 0.2 and self.step_count % self.network_update_step == 0:
             self.learn()
 
         if self.step_count % self.target_update_step == 0:
@@ -184,7 +185,7 @@ class Agent(AgentInterface):
         # Normalize rewards
         # rewards = self._normalize_reward(rewards)
 
-        # Calculate target reward and detach it from the graph 
+        # Calculate target reward and detach it from the graph
         # Avoid gradient descend in the target network
         next_state_value = self.target(next_states).max(1)[0].detach()
 
@@ -192,7 +193,6 @@ class Agent(AgentInterface):
         next_state_value[dones] = 0.0
 
         # Calculate target reward
-        #print("next state value", next_state_value)
         target_reward = rewards + (self.gamma * next_state_value)
 
         # Actual action values state
