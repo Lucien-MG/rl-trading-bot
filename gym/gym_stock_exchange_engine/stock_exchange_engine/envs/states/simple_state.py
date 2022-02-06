@@ -54,7 +54,7 @@ class SimpleStockExchangeState(StockExchangeStateInterface):
 
         # Nest step state
         observation = self.encode()
-        reward += 0
+        reward += ((self.data["close"][self.offset] - self.last_price) / self.last_price) / 10 if self.last_price else 0
         done |= self.offset >= len(self.data) - 1
         info = {}
 

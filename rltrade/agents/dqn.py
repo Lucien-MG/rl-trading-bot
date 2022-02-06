@@ -62,12 +62,10 @@ class Agent(AgentInterface):
     def _normalize_state(self, state):
         """ Normalize state.
         """
-        # Stock = Close - Stock
-        #state[-4] = (state[-4] - state[-3])
-
-        #mu = torch.mean(state, axis=1)
-        #sigma = torch.std(state, axis=1)
-        #state_normalized = torch.transpose((torch.transpose(state, 0, 1) - mu) / (sigma + 1e-10), 0, 1)
+        #mu = torch.mean(state, axis=-1)
+        #sigma = torch.std(state, axis=-1)
+        #state = torch.transpose((torch.transpose(state, 0, 1) - mu) / (sigma + 1e-10), 0, 1)
+        state = (state - torch.mean(state)) / (torch.mean(state) + 1e-10)
 
         return state
 
