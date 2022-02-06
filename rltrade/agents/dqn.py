@@ -21,7 +21,7 @@ class Agent(AgentInterface):
     """
     def __init__(self, config):
         self._set_parameters(config)
-        
+
         self.action_space= int(self.action_space)
         self.input_shape = (1, 41)
 
