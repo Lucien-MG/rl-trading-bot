@@ -7,8 +7,7 @@ import dash_bootstrap_components as dbc
 from application.callback import add_callbacks
 from application.css import *
 
-from application.index_html import layout, page_train #add_layout
-import reinforcement_api
+from application.index_html import layout
 
 def run_app():
     app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)

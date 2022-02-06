@@ -3,6 +3,8 @@
 
 import sys
 
+from app import run_app
+
 from core import core
 from core.utils.utils import pretty_print_list
 
@@ -32,6 +34,12 @@ def cmd_run(**kwargs) -> None:
     # Launch a run of the environement:
     core.run()
 
+
+def cmd_interactive(**kwargs) -> None:
+    # Lauch a interaction session
+    run_app()
+
+    
 
 def run_cmd(arguments):
     command_module = sys.modules[__name__]

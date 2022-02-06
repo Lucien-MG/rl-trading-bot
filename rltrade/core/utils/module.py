@@ -20,16 +20,16 @@ def list_modules(package_name: str) -> list:
 
     # List all mods
     mods = os.listdir(path)
-
+    new_mods = [] 
+    
     # Remove non-pertinent content
-    for e in ['agent_interface.py', '__pycache__', '__init__.py', 'tools']:
-        try:
-            mods.remove(e)
-        except:
-            # In this case, nothing need to be remove
-            pass
+    garbage = ['agent_interface.py', '__pycache__', '__init__.py', 'tools']
+    
+    for e in mods:
+        if e not in garbage and '.py' in e:
+            new_mods.append(e)
 
     # Remove extensions
-    mods = map(lambda a: os.path.splitext(a)[0], mods)
+    new_mods = map(lambda a: os.path.splitext(a)[0], new_mods)
 
-    return mods
+    return new_mods

@@ -7,23 +7,22 @@ from dash import html
 
 from .css import *
 
-from tools.utils import load_config
+from core.utils.utils import load_config
 
-import reinforcement_api
+from core import core
 
+agents = [{'label': agent.capitalize(), 'value': agent} for agent in core.list_agent()]
+envs = [{'label': env.capitalize(), 'value': env} for env in core.list_env()]
+datas = [{'label': data.capitalize(), 'value': data} for data in core.list_data()]
 
-agents = [{'label': agent.capitalize(), 'value': agent} for agent in reinforcement_api.list_agent()]
-envs = [{'label': env.capitalize(), 'value': env} for env in reinforcement_api.list_env()]
-datas = [{'label': data.capitalize(), 'value': data} for data in reinforcement_api.list_data()]
+rltrade_config = load_config('config/rltrade_config.yaml')
+#random_config = load_config('config.yaml')
 
-dqn_config = load_config('agent_config.yaml')
-random_config = load_config('config.yaml')
+#dqn = []
+#random = []
 
-dqn = []
-random = []
-
-for i in list(random_config):
-    random.append(
+#for i in list(random_config):
+'''    random.append(
         dbc.Row([
             html.Div(i, style=AUTO),
             dcc.Input(value = random_config[i], style=AUTO, maxLength=10, size='2')
@@ -52,7 +51,7 @@ for i in list(dqn_config):
                 html.Div(i, style=AUTO),
                 dcc.Input(value = dqn_config[i], style=AUTO, maxLength=10, size='2')
             ], style = ROW_SIDEBAR))
-
+'''
 sidebar = html.Div([
         html.Div([
 		    html.Div([
@@ -83,18 +82,17 @@ sidebar = html.Div([
 
             html.Br(),
 
-            html.Div(
-                dbc.Row([
-                    html.Div('Folder', style=AUTO),
-                    dcc.Input(value = '', style=AUTO, maxLength=10, size='7', id='folder_value')
-                ], style = ROW_SIDEBAR
-            ), style = HIDDEN, id = 'folder'),
+            #'''html.Div(
+            #    dbc.Row([
+            #        html.Div('Folder', style=AUTO),
+            #        dcc.Input(value = '', style=AUTO, maxLength=10, size='7', id='folder_value')
+            #    ], style = ROW_SIDEBAR
+            #), style = HIDDEN, id = 'folder'),'''
             
 
-            html.Br(),
 
-            html.Div(dqn, id='random', style = HIDDEN), #random
-            html.Div(dqn, id='dqn', style = HIDDEN),
+            #html.Div(dqn, id='random', style = HIDDEN), #random
+            #html.Div(dqn, id='dqn', style = HIDDEN),
 
             html.Div([
                 dbc.Button(
@@ -111,7 +109,7 @@ sidebar = html.Div([
             dcc.Link("Go to data page", href='/data')
             ],  style=SIDEBAR_STYLE, id='sidebar')
 
-content =html.Div([
+content = html.Div([
         html.Div([
             dbc.Button(
                 id='show',
@@ -227,11 +225,9 @@ content_data = html.Div([
     dcc.Link("Go to train page", href='/')])
 
 
-
-
 layout = html.Div([
-            dcc.Location(id='url', refresh=False),
-            html.Div(id='page-content')])    
+    dcc.Location(id='url', refresh=False),
+    html.Div(id='page-content')])
 
 page_train = html.Div([sidebar, content])
 page_product = html.Div([sidebar_prod, content_prod])

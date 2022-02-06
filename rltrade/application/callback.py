@@ -17,9 +17,9 @@ from application.index_html import *
 
 from agents.random import Agent
 
-from reinforcement_api import train, list_env, run
+from core.core import train, list_env, run
 
-from tools.utils import *
+#from tools.utils import *
 
 
 def add_callbacks(app):
@@ -42,15 +42,16 @@ def add_callbacks(app):
         if not os.path.isdir(folder):
             os.mkdir(folder)
        
-        if agent_value == 'dqn_v1': 
+        '''if agent_value == 'dqn_v1': 
             save_dqn_config(dqn_values, folder)
         elif agent_value =='random':
-            save_dqn_config(rdm_values, folder)
+            save_dqn_config(rdm_values, folder)'''
             #save_random_config(rdm_values, folder)
 
         print(stock_value)
         # THREAD 
-        train(stock_value, agent_value, agent_config=folder + '/config.yaml', nb_episode=2, log_path=folder + '/logs.csv')
+        #train(stock_value, agent_value, agent_config=folder + '/config.yaml', nb_episode=2, log_path=folder + '/logs.csv')
+        train(load_config('config/rltrade_config.yaml'))
 
         # TODO pb on affiche que le dernier épisode
         
