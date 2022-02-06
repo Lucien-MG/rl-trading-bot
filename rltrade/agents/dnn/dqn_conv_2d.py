@@ -7,6 +7,11 @@ import torch.nn as nn
 class DQNConv2D(nn.Module):
 
     def __init__(self, input_shape, action_space):
+        """Init DQNConv2D class
+        Args:
+            input_shape (int): shape on the convolution
+            action_space (int): degree of liberty
+        """
         super(DQNConv2D, self).__init__()
 
         self.conv2d = nn.Sequential(
@@ -31,10 +36,18 @@ class DQNConv2D(nn.Module):
         )
 
     def _get_conv_out(self, shape):
+        """Get return value of conv2D
+        Args:
+            shape (int): shape of conv2D
+        """
         out = self.conv2d(torch.zeros(1, *shape))
         return int(torch.prod(torch.tensor(out.size())))
 
     def forward(self, x):
+        """Get the conv2 to the next step
+        Args:
+            shape (obj): the convolution
+        """
         conv1d = self.conv1d(x).view(x.size()[0], -1)
         val = self.fc_val(conv1d)
         adv = self.fc_adv(conv1d)
