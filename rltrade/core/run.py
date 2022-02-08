@@ -3,13 +3,8 @@
 
 import sys
 
-from app import run_app
-
 from core import core
 from core.utils.utils import pretty_print_list
-
-from config.agent_config import AgentConfig
-from config.environment_config import EnvironmentConfig
 
 def cmd_list_agent(**kwargs) -> None:
     print("Available agents:")
@@ -27,21 +22,15 @@ def cmd_list_env(**kwargs) -> None:
 
 def cmd_train(**kwargs) -> None:
     # Launch a training on the environement:
-    core.train()
+    core.train(kwargs['rltrade_config'])
 
 
 def cmd_run(**kwargs) -> None:
     # Launch a run of the environement:
-    core.run()
+    core.run(kwargs['rltrade_config'])
 
 
-def cmd_interactive(**kwargs) -> None:
-    # Lauch a interaction session
-    run_app()
-
-    
-
-def run_cmd(arguments):
+def run_cmd(arguments, **kwargs):
     command_module = sys.modules[__name__]
     command_module_functions = dir(command_module)
 
@@ -49,4 +38,4 @@ def run_cmd(arguments):
         func_name = "cmd_" + arg
         if arguments.__dict__[arg] is True and func_name in command_module_functions:
             cmd_func = getattr(command_module, func_name)
-            cmd_func()
+            cmd_func(**kwargs)

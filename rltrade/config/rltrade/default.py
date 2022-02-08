@@ -1,8 +1,10 @@
 from pathlib import Path
 from dataclasses import field
 
+from definitions import ROOT_DIRECTORY
+
 # The root of the framework
-FRAMEWORK_ROOT = Path(__file__).absolute().parent.parent.parent.parent
+FRAMEWORK_ROOT = Path(ROOT_DIRECTORY)
 
 # Path to the rltrade config:
 RLTRADE_CONFIG_PATH: str = FRAMEWORK_ROOT / "config/rltrade_config.yaml"

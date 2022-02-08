@@ -4,7 +4,7 @@
 import yaml
 
 from dataclasses import dataclass
-from core.config.rltrade_default import *
+from config.rltrade.default import *
 
 @dataclass
 class RLtradeConfig:

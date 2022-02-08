@@ -6,14 +6,11 @@ import gym
 
 from core.utils import module
 
-from core.cmd.parser import argument_parser
-
 from core.genv.run import RunEnvironment
 from core.genv.train import TrainEnvironment
 
-from core.config.rltrade_config import RLtradeConfig
-from config.agent_config import AgentConfig
-from config.environment_config import EnvironmentConfig
+from config.agent.agent_config import AgentConfig
+from config.environment.environment_config import EnvironmentConfig
 
 def list_agent() -> list:
     return module.list_modules("agents")
@@ -72,9 +69,9 @@ def train(rltrade_config):
 
 def run(rtrade_config):
     # Get a default agent config
-    agent_config = AgentConfig(rltrade_confg.agent_config_path)
+    agent_config = AgentConfig(rtrade_config.agent_config_path)
 
-    environment = load_environment(rltrade_config)[0]
+    environment = load_environment(rtrade_config)[0]
 
     # Load and build agent
     agent = load_agent(agent_config.name)(agent_config)

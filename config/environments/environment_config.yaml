@@ -25,7 +25,7 @@ index: "MSFT"
 #
 # data_path: ""
 
-# Input data folder path.
+# Date's data.
 #
 start_date: "2022-01-07"
 end_date: "2022-02-06"

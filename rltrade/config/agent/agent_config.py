@@ -4,7 +4,7 @@
 import yaml
 
 from dataclasses import dataclass
-from config.agent_default import *
+from config.agent.default import *
 
 @dataclass
 class AgentConfig:

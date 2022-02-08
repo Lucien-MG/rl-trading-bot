@@ -1,25 +1,28 @@
 #!/usr/bin/python3
-#‑∗‑ coding: utf‑8 ‑∗‑
+# ‑∗‑ coding: utf‑8 ‑∗‑
 
-from core.cmd.cmd import run_cmd
+from core.run import run_cmd
 from core.cmd.parser import argument_parser
 
-from core.config.rltrade_config import RLtradeConfig
+from config.rltrade.rltrade_config import RLtradeConfig
+
 
 def main() -> int:
-    print("########## RLtrade ##########\n")
-
     # Parse command line arguments
     arguments = argument_parser()
 
     # Load configuration
-    rltrade_config = RLtradeConfig(arguments.config) if arguments.config else RLtradeConfig()
+    rltrade_config = RLtradeConfig()
+
+    if arguments.config:
+        rltrade_config = RLtradeConfig(arguments.config)
 
     # Print information
     print(rltrade_config.infos())
 
     # Run the command
-    cmd_code = run_cmd(arguments)
+    cmd_code = run_cmd(arguments, rltrade_config=rltrade_config)
+
     return cmd_code
 
 
