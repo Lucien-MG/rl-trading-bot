@@ -11,16 +11,13 @@ class RLtradeConfig:
     """ Describe the data that we want for our environment. """
 
     # # The root of the framework
-    framework_root: str = FRAMEWORK_ROOT
+    root_directory: str = ROOT_DIRECTORY
 
     # Path to the rltrade config:
     rltrade_config_path: str = RLTRADE_CONFIG_PATH
 
     # Data folder:
     rltrade_data_path: str = RLTRADE_DATA_PATH
-
-    # Command to execute:
-    command: str = COMMAND
 
     # Agent configuration path:
     agent_config_path: str = AGENT_CONFIG_PATH
@@ -64,11 +61,12 @@ class RLtradeConfig:
 
     def infos(self):
         return (
-            f"Root path: {self.framework_root}\n"
+            f"RLtrade config:\n"
+            f"\n"
+            f"Root path: {self.root_directory}\n"
             f"Config path: {self.rltrade_config_path}\n"
             f"Data folder path: {self.rltrade_data_path}\n"
             f"\n"
-            f"Mode: {self.command}\n"
             f"Logger: {self.logger}\n"
             f"\n"
             f"Agent config path: {self.agent_config_path}\n"

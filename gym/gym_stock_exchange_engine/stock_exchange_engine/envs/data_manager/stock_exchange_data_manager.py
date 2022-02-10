@@ -65,11 +65,15 @@ class StockExchangeDataManager:
         delta_count = content.loc[self._mask(start_date, end_date)]["date"].count()
         return delta_count > 0
 
-    def _download_content(self, index, source, start_time, end_time):
+    def _download_content(self, index, source, start_time, end_time, interval="1d"):
+        # Import the module to use for data fetching
         module_path = pathlib.Path(self.SOURCES[source].module_finder.path)
         source_module = self._import_module(source, module_path)
-        source_class = source_module.SourceClass(index, start_time, end_time)
 
+        # Create a new module
+        source_class = source_module.SourceClass(index, start_time, end_time, interval)
+
+        # Use loaded module to fetch data
         data_downloaded = source_class.load()
         data_downloaded.columns = data_downloaded.columns.str.replace('[#,@,&,<,>]', '', regex=True)
 
@@ -87,7 +91,7 @@ class StockExchangeDataManager:
     def _select_content(self, content, start_date, end_date):
         return content.loc[self._mask(start_date, end_date)]
 
-    def get_index(self, index, source, start_date, end_date):
+    def get_index(self, index, source, start_date, end_date, interval="1d"):
         if source not in self.SOURCES.keys():
             raise ValueError('Source: ' + source + ' does not exist. Available sources are:', self.SOURCES_NAME)
 
@@ -102,8 +106,8 @@ class StockExchangeDataManager:
 
         # Check and download content if necessary
         if source != self.LOCAL:
-            print("\nDownload data:")
-            downloaded_content = self._download_content(index, source, start_time, end_time)
+            print("\nFetching data from", source)
+            downloaded_content = self._download_content(index, source, start_time, end_time, interval)
             missing_content = self._missing_content(content, downloaded_content)
             content = self._merge_content(content, missing_content)
             self._save_content(content, file_path)
@@ -112,7 +116,7 @@ class StockExchangeDataManager:
         # Get the exact content asked
         content = self._select_content(content, start_date, end_time)
 
-        # Set index
-        content.set_index('date')
+        # Reset index
+        content = content.reset_index(drop=True)
 
         return content

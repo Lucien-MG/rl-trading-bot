@@ -9,13 +9,9 @@
 #
 # environment_id: "stock_exchange_engine:stock_exchange_engine_env-v0"
 
-# Use the simulation engine.
-#
-# simulation: True
-
 # Choose which api to use or use local data:
 #
-source: "yahoo"
+source: "local"
 
 # Choose which index to use:
 #
@@ -27,12 +23,9 @@ index: "MSFT"
 
 # Date's data.
 #
-start_date: "2022-01-07"
+INTERVAL: "1m"
+start_date: "2022-01-12"
 end_date: "2022-02-06"
-
-# Data encoding
-#
-# data_encoding: "matrix"
 
 # Render the environment
 #

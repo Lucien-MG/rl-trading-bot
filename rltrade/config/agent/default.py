@@ -28,7 +28,7 @@ MIN_EPSILON: float = 0.1
 EPSILON_DECAY_FACTOR: float = 0.9995
 
 # Epsilon update step
-EPSILON_UPDATE_STEP: int = 250
+EPSILON_UPDATE_STEP: int = 300
 
 # Number of steps keep in memory
 MEMORY_SIZE: int = 150000

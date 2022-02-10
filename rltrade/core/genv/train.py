@@ -29,6 +29,7 @@ class TrainEnvironment:
 
         self.step = 0
 
+        self.environment = None
         self.rewards = deque(maxlen=100)
 
         assert isinstance(self.envs, list)
@@ -43,7 +44,9 @@ class TrainEnvironment:
 
         for element in self.logging_variables:
             for attributes in self.logging_variables[element]:
-                if attributes in self.__dict__[element].__dict__:
+                if isinstance(self.__dict__[element], RunEnvironment):
+                    self.logger.log(attributes, self.__dict__[element].env.env.__dict__[attributes], self.step)
+                else:
                     self.logger.log(attributes, self.__dict__[element].__dict__[attributes], self.step)
 
     def train(self, episodes=100):
@@ -52,13 +55,13 @@ class TrainEnvironment:
         self.logger.start()
 
         for _ in tqdm(range(episodes)):
-            environment_runner = random.choice(environment_runners)
+            self.environment = random.choice(environment_runners)
 
-            episode_rewards = environment_runner.episode()
+            episode_rewards = self.environment.episode()
 
             self.step += len(episode_rewards)
 
-            episode_reward_indicator = sum(episode_rewards)
+            episode_reward_indicator = sum(episode_rewards) / len(episode_rewards)
 
             self.rewards.append(episode_reward_indicator)
 

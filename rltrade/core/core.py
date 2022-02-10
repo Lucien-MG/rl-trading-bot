@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-#‑∗‑ coding: utf‑8 ‑∗‑
+# ‑∗‑ coding: utf‑8 ‑∗‑
 
 import os
 import gym
@@ -11,6 +11,7 @@ from core.genv.train import TrainEnvironment
 
 from config.agent.agent_config import AgentConfig
 from config.environment.environment_config import EnvironmentConfig
+
 
 def list_agent() -> list:
     return module.list_modules("agents")
@@ -37,11 +38,14 @@ def load_environment(rltrade_config):
     environment_config = [EnvironmentConfig()]
 
     if os.path.isdir(rltrade_config.environment_config_path):
-        environment_config = [EnvironmentConfig(os.path.join(rltrade_config.environment_config_path, config_path)) for config_path in os.listdir(rltrade_config.environment_config_path)]
+        environment_config = [EnvironmentConfig(os.path.join(rltrade_config.environment_config_path, config_path))
+                              for config_path in os.listdir(rltrade_config.environment_config_path)]
     else:
-        environment_config = [EnvironmentConfig(rltrade_config.environment_config_path)]
+        environment_config = [EnvironmentConfig(
+            rltrade_config.environment_config_path)]
 
-    environment = [gym.make(env_config.environment_id, config=env_config) for env_config in environment_config]
+    environment = [gym.make(env_config.environment_id, config=env_config)
+                   for env_config in environment_config]
 
     return environment
 
@@ -60,7 +64,8 @@ def train(rltrade_config):
     logger = load_logger(rltrade_config.logger)()
 
     # Train the agent with the environment
-    renv = TrainEnvironment(environment, agent, logger=logger, logging_variables=rltrade_config.logging_variables)
+    renv = TrainEnvironment(environment, agent, logger=logger,
+                            logging_variables=rltrade_config.logging_variables)
 
     res = renv.train(episodes=rltrade_config.train_episodes)
 
@@ -83,5 +88,3 @@ def run(rtrade_config):
     res = renv.episode()
 
     return res
-
-

@@ -24,7 +24,9 @@ logging_variables:
   agent:
     - epsilon
     - loss
+  environment:
+    - gain
 
 # Number of training episodes
 #
-train_episodes: 3000
+train_episodes: 50000

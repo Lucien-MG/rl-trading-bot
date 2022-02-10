@@ -1,10 +1,11 @@
 #!/usr/bin/python3
-#‑∗‑ coding: utf‑8 ‑∗‑
+# ‑∗‑ coding: utf‑8 ‑∗‑
 
 import sys
 
 from core import core
 from core.utils.utils import pretty_print_list
+
 
 def cmd_list_agent(**kwargs) -> None:
     print("Available agents:")

@@ -13,10 +13,14 @@ class SimpleStockExchangeState(StockExchangeStateInterface):
         self.data = data
         self.config = config
 
+        self.gain = 0
+
     def reset(self):
         self.offset = self.config.nb_bars
         self.last_price = 0
         self.stock = 0
+
+        self.gain = 0
 
         return self.encode()
 
@@ -47,14 +51,16 @@ class SimpleStockExchangeState(StockExchangeStateInterface):
             self.stock -= 1
             reward += -0.01
             reward += (self.data["close"][self.offset] - self.last_price) / self.last_price
+            self.gain = (self.data["close"][self.offset] - self.last_price) / self.last_price
             self.last_price = 0
+            done = True
 
         # Next step
         self.offset += 1
 
         # Nest step state
         observation = self.encode()
-        reward += ((self.data["close"][self.offset] - self.last_price) / self.last_price) / 10 if self.last_price else 0
+        # reward += ((self.data["close"][self.offset] - self.last_price) / self.last_price) / 10 if self.last_price else 0
         done |= self.offset >= len(self.data) - 1
         info = {}
 

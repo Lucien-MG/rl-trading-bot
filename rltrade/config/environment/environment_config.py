@@ -23,14 +23,14 @@ class EnvironmentConfig:
     data_path: str = DATA_PATH
 
     # Choose the time that will be use in the environment
+    # fetch data by interval (including intraday if period < 60 days)
+    # valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
+    interval: str = INTERVAL
     start_date: str = START_DATE
     end_date: str = END_DATE
 
     # Bars history
     nb_bars: int = NB_BARS
-
-    # Data encoding
-    data_encoding: str = DATA_ENCODING
 
     # Stock Exchange parameters
     initial_account: float = INITIAL_ACCOUNT
