@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+{% include 'includes/navbar/home.html' %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+      <div class="col jumbotron">
+        1 of 3
+      </div>
+      <div class="col-6 jumbotron">
+        2 of 3 (wider)
+      </div>
+      <div class="col jumbotron">
+        3 of 3
+      </div>
+    </div>
+    <div class="row">
+      <div class="col jumbotron">
+        1 of 3
+      </div>
+      <div class="col-5 jumbotron">
+        2 of 3 (wider)
+      </div>
+      <div class="col jumbotron bg-light">
+        3 of 3
+      </div>
+    </div>
+  </div>
+
+<canvas id="chart" width="600" height="400"></canvas>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+<script>
+    var mychart = document.getElementById("chart").getContext("2d");
+
+    var lineChart = new Chart(mychart, {
+        type: "line",
+        data: {
+            labels: {{ labels | safe }},
+            datasets: [
+                {
+                    data: {{ values | safe }},
+                    fill: false,
+                    borderColor: "rgb(75, 192, 192)",
+                    lineTension: 0.1
+                }
+            ]
+        },
+    options: {
+        legend: {
+            display: false
+        },
+        responsive: true
+    }
+    })
+</script>
+
+{%- endblock scripts %}

@@ -34,6 +34,10 @@ def load_logger(logger_name: str):
     return module.load_module("core.log", logger_name).Logger
 
 
+def create_environment(env_config):
+    return gym.make(env_config.environment_id, config=env_config)
+
+
 def load_environment(rltrade_config):
     environment_config = [EnvironmentConfig()]
 

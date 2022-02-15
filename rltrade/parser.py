@@ -19,8 +19,8 @@ def commands(parser):
     parser.add_argument('-le', '--list-env', action='store_true', default=DEFAULT_CMD,
                     help='list all available environment.')
 
-    parser.add_argument('-i', '--interactive', action='store_true', default=DEFAULT_CMD,
-                    help='lauch a interactive session') 
+    parser.add_argument('-s', '--server', action='store_true', default=DEFAULT_CMD,
+                    help='lauch a server session') 
 
 def configuration(parser):
     parser.add_argument('-c', '--config', type=str, default=DEFAULT_CONFIG,
