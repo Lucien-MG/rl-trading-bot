@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 data/
 runs/
+
+# IDE ignore
+.DS_Store
