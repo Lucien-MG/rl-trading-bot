@@ -2,12 +2,12 @@
 
 {% block content %}
 
-<form class="container-fluid" method="post">
+<form class="container" method="post">
 
     <div class="row">
 
       <div class="col-sm">
-        <h4>Stocks</h4>
+        <h4>Help</h4>
       </div>
 
       <div class="col-sm-1"></div>
@@ -45,60 +45,14 @@
     </div>
 
     <div class="row">
-
-        <div class="col-sm-2">
-
-            <div class="row">
-                <div class="col-sm jumbotron" style="background:rgb(255,255,255)">
-                    Test
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-sm jumbotron" style="background:rgb(255,255,255)">
-                    Test
-                </div>
-            </div>
-
+        <div class="col-sm-1">
         </div>
 
-        <div class="col-md-auto"></div>
-
-        <div class="col-sm jumbotron" style="background:rgb(255,255,255)">
-            <canvas id="chart"></canvas>
+        <div class="col-sm jumbotron jumbotron-fluid" style="background:rgb(255,255,255)">
+            <canvas id="chart" width="400" height="200"></canvas>
         </div>
-
     </div>
 
 </div>
 
 {% endblock %}
-
-{% block script %}
-
-<script>
-    var mychart = document.getElementById("chart").getContext("2d");
-
-    var lineChart = new Chart(mychart, {
-        type: "line",
-        data: {
-            labels: {{ labels | safe }},
-    datasets: [
-        {
-            data: {{ values | safe }},
-        fill: false,
-        borderColor: "rgb(75, 192, 192)",
-        lineTension: 0.1
-                }
-    ]
-        },
-    options: {
-        legend: {
-            display: false
-        },
-        responsive: true
-    }
-    })
-</script>
-
-{%- endblock script %}

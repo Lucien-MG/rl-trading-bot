@@ -1,0 +1,36 @@
+{% extends 'user/base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+      <div class="col jumbotron">
+        1 of 3
+      </div>
+      <div class="col-6 jumbotron">
+        2 of 3 (wider)
+      </div>
+      <div class="col jumbotron">
+        3 of 3
+      </div>
+    </div>
+    <div class="row">
+      <div class="col jumbotron">
+        1 of 3
+      </div>
+      <div class="col-5 jumbotron">
+        2 of 3 (wider)
+      </div>
+      <div class="col jumbotron bg-light">
+        3 of 3
+      </div>
+    </div>
+  </div>
+
+<canvas id="chart" width="600" height="400"></canvas>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{%- endblock scripts %}

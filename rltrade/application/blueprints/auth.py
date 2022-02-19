@@ -19,10 +19,6 @@ def login_post():
     password = request.form.get('password')
 
     user = User.query.filter_by(email=email).first()
-    print(dir(user))
-    print(password)
-    print(not user)
-    print(check_password_hash(user.password, password))
 
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
@@ -60,6 +56,10 @@ def signup_post():
     database.session.commit()
 
     return redirect(url_for('auth.login'))
+
+@auth.route('/welcome')
+def welcome():
+    return render_template("welcome.html")
 
 @auth.route('/logout')
 def logout():

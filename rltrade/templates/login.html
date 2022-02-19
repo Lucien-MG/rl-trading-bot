@@ -1,40 +1,35 @@
 {% extends 'base.html' %}
 
-{% block navbar %}
-{% include 'includes/navbar/login.html' %}
-{% endblock %}
-
 {% block content %}
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <div class="card shadow-2-strong" style="border-radius: 1rem;">
+                <form class="card-body p-5 text-center" method="post">
 
-<div class="d-flex justify-content-center align-items-center vh-100">
+                    <h3 class="mb-5 h2">Sign in</h3>
 
-    <div class="jumbotron bg-secondary">
-        <h3 class="title">Login</h3>
+                    {% include 'flash.html' %}
 
-        <div class="box">
-            <form method="POST" action="/login">
-
-                <div class="field">
-                    <div class="control">
-                        <input class="input is-large" type="email" name="email" placeholder="Your Email" autofocus="">
+                    <div class="form-outline mb-4">
+                        <input type="email" id="email" name="email" class="form-control form-control-lg" />
+                        <label class="form-label" for="email">Email</label>
                     </div>
-                </div>
 
-                <div class="field">
-                    <div class="control">
-                        <input class="input is-large" type="password" name="password" placeholder="Your Password">
+                    <div class="form-outline mb-4">
+                        <input type="password" id="password" name="password" class="form-control form-control-lg" />
+                        <label class="form-label" for="password">Password</label>
                     </div>
-                </div>
 
-                <button class="btn btn-primary" type="submit">Login</button>
-            </form>
+                    <div class="form-outline mb-4">
+                        <a href="/signup" class="link-primary">New User</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Login</button>
+
+                </form>
+            </div>
         </div>
     </div>
-
 </div>
-
 {% endblock %}
-
-{% block scripts %}
-{{ super() }}
-{%- endblock scripts %}

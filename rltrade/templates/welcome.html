@@ -2,10 +2,12 @@
 
 {% block content %}
 
-<h1>Welcome</h1>
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+            <a href="/login" class="link-primary">Welcome</a>
+        </div>
+    </div>
+</div>
 
 {%- endblock content %}
-
-{% block scripts %}
-{{ super() }}
-{%- endblock scripts %}
