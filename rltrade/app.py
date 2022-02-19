@@ -1,6 +1,6 @@
 import uuid
 
-from flask import Flask, url_for, redirect, render_template, session, request
+from flask import Flask
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
 
