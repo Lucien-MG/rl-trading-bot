@@ -37,7 +37,7 @@ def load_logger(logger_name: str):
 def load_environment(rltrade_config):
     environment_config = [EnvironmentConfig()]
 
-    if os.path.isdir(rltrade_config.environment_config_path):
+    if rltrade_config.environment_config_path and os.path.isdir(rltrade_config.environment_config_path):
         environment_config = [EnvironmentConfig(os.path.join(rltrade_config.environment_config_path, config_path))
                               for config_path in os.listdir(rltrade_config.environment_config_path)]
     else:

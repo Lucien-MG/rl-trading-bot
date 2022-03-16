@@ -2,23 +2,31 @@
 # ‑∗‑ coding: utf‑8 ‑∗‑
 
 import sys
+import app
 
 from core import core
-from core.utils.utils import pretty_print_list
+
+
+
+def cmd_application(**kwargs) -> None:
+    # Launch application:
+    app.launch(kwargs['rltrade_config'])
 
 
 def cmd_list_agent(**kwargs) -> None:
     print("Available agents:")
     agents = core.list_agent()
 
-    pretty_print_list(agents)
+    for agent in agents:
+        print("  -", agent)
 
 
 def cmd_list_env(**kwargs) -> None:
     print("Available environments:")
     envs = core.list_env()
 
-    pretty_print_list(envs)
+    for env in envs:
+        print("  -", env)
 
 
 def cmd_train(**kwargs) -> None:

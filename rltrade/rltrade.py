@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # ‑∗‑ coding: utf‑8 ‑∗‑
 
-from core.run import run_cmd
-from core.cmd.parser import argument_parser
+from run import run_cmd
+from cmd import argument_parser
 
 from config.rltrade.rltrade_config import RLtradeConfig
 
