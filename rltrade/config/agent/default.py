@@ -22,16 +22,16 @@ GAMMA: float = 0.99
 EPSILON: float = 1.0
 
 # Minimal value for epsilon
-MIN_EPSILON: float = 0.1
+MIN_EPSILON: float = 0.00001
 
 # Epsilon decay factor
-EPSILON_DECAY_FACTOR: float = 0.9995
+EPSILON_DECAY_FACTOR: float = 0.9998
 
 # Epsilon update step
 EPSILON_UPDATE_STEP: int = 300
 
 # Number of steps keep in memory
-MEMORY_SIZE: int = 150000
+MEMORY_SIZE: int = 200000
 
 # Batch size
 BATCH_SIZE: int = 32

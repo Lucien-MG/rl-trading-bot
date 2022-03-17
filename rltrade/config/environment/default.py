@@ -17,8 +17,8 @@ DATA_PATH: str = "~/.rltrade/data"
 # fetch data by interval (including intraday if period < 60 days)
 # valid intervals: 1m,2m,5m,15m,30m,60m,90m,1h,1d,5d,1wk,1mo,3mo
 INTERVAL: str = "1m"
-START_DATE: str = "2015-01-01"
-END_DATE: str = "2015-12-31"
+START_DATE: str = "2022-03-01"
+END_DATE: str = "2022-03-16"
 
 # Bars history
 NB_BARS: int = 10

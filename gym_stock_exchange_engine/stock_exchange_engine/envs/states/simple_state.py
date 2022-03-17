@@ -2,7 +2,6 @@
 #‑∗‑ coding: utf‑8 ‑∗‑
 
 import numpy as np
-from collections import deque
 
 from ..actions.actions import Actions
 from .stock_exchange_state_interface import StockExchangeStateInterface

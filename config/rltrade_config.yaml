@@ -29,4 +29,4 @@ logging_variables:
 
 # Number of training episodes
 #
-train_episodes: 50000
+train_episodes: 250000
