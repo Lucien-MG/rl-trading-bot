@@ -24,8 +24,21 @@ Install the requirements:
 pip3 install -r requirements.txt
 ```
 
-Finally, run rltrade.py with interactive option:
+Finally, run the application:
 
 ```
-python3 src/rltrade.py --interactive
+python3 rltrade/rltrade_app.py
+```
+
+Or use the command line interface:$
+
+
+```
+python rltrade -h
+```
+
+To launch a training use:
+
+```
+python rltrade --train -c config/rltrade_config.yaml
 ```
